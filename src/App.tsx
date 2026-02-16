@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { SchoolProvider, useSchool } from "@/contexts/SchoolContext";
+import { LanguageProvider } from "@/contexts/LanguageContext";
 import { AppLayout } from "@/components/AppLayout";
 import Setup from "./pages/Setup";
 import Dashboard from "./pages/Dashboard";
@@ -82,15 +83,17 @@ function AppRoutes() {
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <SchoolProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <AppRoutes />
-        </BrowserRouter>
-      </TooltipProvider>
-    </SchoolProvider>
+    <LanguageProvider>
+      <SchoolProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <AppRoutes />
+          </BrowserRouter>
+        </TooltipProvider>
+      </SchoolProvider>
+    </LanguageProvider>
   </QueryClientProvider>
 );
 
