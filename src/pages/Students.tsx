@@ -20,6 +20,7 @@ import {
   UserPlus, Search, Upload, Users, User, Heart, FileText, CreditCard, ClipboardList, Eye, Pencil, Trash2,
 } from "lucide-react";
 import { useSchool } from "@/contexts/SchoolContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface Student {
   id: string;
@@ -34,24 +35,20 @@ interface Student {
   specialTalent: string;
   className: string;
   status: "active" | "suspended" | "withdrawn";
-  // Guardian
   guardianName: string;
   guardianPhone: string;
   guardianEmail: string;
   guardianRelationship: string;
   guardianAddress: string;
   guardianOccupation: string;
-  // Academic
   previousSchool: string;
   previousClass: string;
   reasonForLeaving: string;
-  // Medical
   bloodGroup: string;
   allergies: string;
   medicalConditions: string;
   emergencyContact: string;
   emergencyPhone: string;
-  // Documents
   hasbirthCertificate: boolean;
   hasPassportPhoto: boolean;
   hasTransferLetter: boolean;
@@ -70,6 +67,7 @@ const defaultForm: Omit<Student, "id" | "status"> = {
 
 export default function Students() {
   const { settings } = useSchool();
+  const { t } = useLanguage();
   const [students, setStudents] = useState<Student[]>(() => {
     const saved = localStorage.getItem("students");
     return saved ? JSON.parse(saved) : [];
@@ -87,7 +85,7 @@ export default function Students() {
   const [form, setForm] = useState<Omit<Student, "id" | "status">>(defaultForm);
 
   const isKindergarten = settings.schoolType === "kindergarten";
-  const title = isKindergarten ? "ECD Pupils" : "Students";
+  const title = isKindergarten ? t("students.ecdTitle") : t("students.title");
   const uniqueClasses = [...new Set(students.map((s) => s.className).filter(Boolean))];
 
   const filtered = students.filter((s) => {
@@ -159,38 +157,36 @@ export default function Students() {
       <div className="page-header">
         <div>
           <h1 className="page-title">{title}</h1>
-          <p className="page-description">{students.length} {title.toLowerCase()} enrolled</p>
+          <p className="page-description">{students.length} {t("students.enrolled")}</p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" size="sm"><Upload className="mr-2 h-4 w-4" /> Import</Button>
+          <Button variant="outline" size="sm"><Upload className="mr-2 h-4 w-4" /> {t("common.import")}</Button>
           <Button size="sm" onClick={openEnrollDialog}>
-            <UserPlus className="mr-2 h-4 w-4" /> Enroll {isKindergarten ? "Pupil" : "Student"}
+            <UserPlus className="mr-2 h-4 w-4" /> {t("students.enroll")} {isKindergarten ? t("students.pupil") : t("students.student")}
           </Button>
         </div>
       </div>
 
-      {/* Search & Filter */}
       <div className="flex items-center gap-3">
         <div className="relative flex-1 max-w-sm">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input placeholder="Search by name or admission no..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
+          <Input placeholder={t("students.searchPlaceholder")} value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
         </div>
         <Select value={classFilter} onValueChange={setClassFilter}>
-          <SelectTrigger className="w-40"><SelectValue placeholder="All Classes" /></SelectTrigger>
+          <SelectTrigger className="w-40"><SelectValue placeholder={t("common.allClasses")} /></SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All Classes</SelectItem>
+            <SelectItem value="all">{t("common.allClasses")}</SelectItem>
             {uniqueClasses.map((cls) => <SelectItem key={cls} value={cls}>{cls}</SelectItem>)}
           </SelectContent>
         </Select>
       </div>
 
-      {/* Table */}
       {students.length === 0 ? (
         <Card>
           <CardContent className="flex flex-col items-center justify-center py-16">
             <Users className="mb-3 h-12 w-12 text-muted-foreground/30" />
-            <p className="text-sm text-muted-foreground">No {title.toLowerCase()} enrolled yet</p>
-            <p className="text-xs text-muted-foreground">Click "Enroll {isKindergarten ? "Pupil" : "Student"}" to get started</p>
+            <p className="text-sm text-muted-foreground">{t("students.noStudents")}</p>
+            <p className="text-xs text-muted-foreground">{t("students.clickEnroll")}</p>
           </CardContent>
         </Card>
       ) : (
@@ -199,13 +195,13 @@ export default function Students() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Adm. No.</TableHead>
-                  <TableHead>Gender</TableHead>
-                  <TableHead>Class</TableHead>
-                  <TableHead>Guardian</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+                  <TableHead>{t("common.name")}</TableHead>
+                  <TableHead>{t("students.admNo")}</TableHead>
+                  <TableHead>{t("common.gender")}</TableHead>
+                  <TableHead>{t("common.class")}</TableHead>
+                  <TableHead>{t("students.guardian")}</TableHead>
+                  <TableHead>{t("common.status")}</TableHead>
+                  <TableHead className="text-right">{t("common.actions")}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -220,7 +216,7 @@ export default function Students() {
                       {s.guardianPhone && <div className="text-xs text-muted-foreground">{s.guardianPhone}</div>}
                     </TableCell>
                     <TableCell>
-                      <Badge variant="outline" className={statusColor(s.status)}>{s.status}</Badge>
+                      <Badge variant="outline" className={statusColor(s.status)}>{t(`students.${s.status}`)}</Badge>
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-1">
@@ -237,126 +233,122 @@ export default function Students() {
         </Card>
       )}
 
-      {/* ========== ENROLLMENT / EDIT DIALOG ========== */}
+      {/* ENROLLMENT / EDIT DIALOG */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <UserPlus className="h-5 w-5" />
-              {editingId ? "Edit" : "Student Enrollment Form"}
+              {editingId ? t("common.edit") : t("students.enrollmentForm")}
             </DialogTitle>
           </DialogHeader>
 
           <Tabs value={tab} onValueChange={setTab}>
             <TabsList className="w-full grid grid-cols-4 lg:grid-cols-7">
-              <TabsTrigger value="basic" className="text-xs gap-1"><User className="h-3 w-3 hidden sm:block" /> Basic Info</TabsTrigger>
-              <TabsTrigger value="guardian" className="text-xs">Guardian</TabsTrigger>
-              <TabsTrigger value="academic" className="text-xs">Academic</TabsTrigger>
-              <TabsTrigger value="medical" className="text-xs gap-1"><Heart className="h-3 w-3 hidden sm:block" /> Medical</TabsTrigger>
-              <TabsTrigger value="documents" className="text-xs gap-1"><FileText className="h-3 w-3 hidden sm:block" /> Docs & IDs</TabsTrigger>
-              <TabsTrigger value="fees" className="text-xs gap-1"><CreditCard className="h-3 w-3 hidden sm:block" /> Fees</TabsTrigger>
-              <TabsTrigger value="requirements" className="text-xs gap-1"><ClipboardList className="h-3 w-3 hidden sm:block" /> Requirements</TabsTrigger>
+              <TabsTrigger value="basic" className="text-xs gap-1"><User className="h-3 w-3 hidden sm:block" /> {t("students.basicInfo")}</TabsTrigger>
+              <TabsTrigger value="guardian" className="text-xs">{t("students.guardian")}</TabsTrigger>
+              <TabsTrigger value="academic" className="text-xs">{t("students.academicRecords")}</TabsTrigger>
+              <TabsTrigger value="medical" className="text-xs gap-1"><Heart className="h-3 w-3 hidden sm:block" /> {t("students.medical")}</TabsTrigger>
+              <TabsTrigger value="documents" className="text-xs gap-1"><FileText className="h-3 w-3 hidden sm:block" /> {t("students.documents")}</TabsTrigger>
+              <TabsTrigger value="fees" className="text-xs gap-1"><CreditCard className="h-3 w-3 hidden sm:block" /> {t("students.fees")}</TabsTrigger>
+              <TabsTrigger value="requirements" className="text-xs gap-1"><ClipboardList className="h-3 w-3 hidden sm:block" /> {t("students.requirements")}</TabsTrigger>
             </TabsList>
 
-            {/* BASIC INFO */}
             <TabsContent value="basic" className="space-y-4 mt-4">
-              <div className="flex items-center gap-2 text-sm font-medium"><User className="h-4 w-4 text-muted-foreground" /> Personal Information</div>
+              <div className="flex items-center gap-2 text-sm font-medium"><User className="h-4 w-4 text-muted-foreground" /> {t("students.personalInfo")}</div>
               <Separator />
               <div className="grid grid-cols-2 gap-4">
-                <div><Label>Full Name *</Label><Input className="mt-1.5" value={form.fullName} onChange={(e) => updateForm({ fullName: e.target.value })} placeholder="Enter student's full name" /></div>
-                <div><Label>Admission Number</Label><Input className="mt-1.5" value={form.admissionNumber} onChange={(e) => updateForm({ admissionNumber: e.target.value })} placeholder="Auto-generated if empty" /></div>
+                <div><Label>{t("students.fullName")} *</Label><Input className="mt-1.5" value={form.fullName} onChange={(e) => updateForm({ fullName: e.target.value })} /></div>
+                <div><Label>{t("students.admissionNumber")}</Label><Input className="mt-1.5" value={form.admissionNumber} onChange={(e) => updateForm({ admissionNumber: e.target.value })} /></div>
               </div>
               <div className="grid grid-cols-3 gap-4">
-                <div><Label>Date of Birth *</Label><Input type="date" className="mt-1.5" value={form.dob} onChange={(e) => updateForm({ dob: e.target.value })} /></div>
-                <div><Label>Gender *</Label>
+                <div><Label>{t("students.dob")} *</Label><Input type="date" className="mt-1.5" value={form.dob} onChange={(e) => updateForm({ dob: e.target.value })} /></div>
+                <div><Label>{t("common.gender")} *</Label>
                   <Select value={form.gender} onValueChange={(v) => updateForm({ gender: v })}>
-                    <SelectTrigger className="mt-1.5"><SelectValue placeholder="Select gender" /></SelectTrigger>
+                    <SelectTrigger className="mt-1.5"><SelectValue placeholder={t("common.select")} /></SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="male">Male</SelectItem>
-                      <SelectItem value="female">Female</SelectItem>
+                      <SelectItem value="male">{t("students.male")}</SelectItem>
+                      <SelectItem value="female">{t("students.female")}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
-                <div><Label>Nationality</Label><Input className="mt-1.5" value={form.nationality} onChange={(e) => updateForm({ nationality: e.target.value })} /></div>
+                <div><Label>{t("students.nationality")}</Label><Input className="mt-1.5" value={form.nationality} onChange={(e) => updateForm({ nationality: e.target.value })} /></div>
               </div>
               <div className="grid grid-cols-2 gap-4">
-                <div><Label>Place of Birth</Label><Input className="mt-1.5" value={form.placeOfBirth} onChange={(e) => updateForm({ placeOfBirth: e.target.value })} /></div>
-                <div><Label>Home District</Label><Input className="mt-1.5" value={form.homeDistrict} onChange={(e) => updateForm({ homeDistrict: e.target.value })} /></div>
+                <div><Label>{t("students.placeOfBirth")}</Label><Input className="mt-1.5" value={form.placeOfBirth} onChange={(e) => updateForm({ placeOfBirth: e.target.value })} /></div>
+                <div><Label>{t("students.homeDistrict")}</Label><Input className="mt-1.5" value={form.homeDistrict} onChange={(e) => updateForm({ homeDistrict: e.target.value })} /></div>
               </div>
               <div className="grid grid-cols-2 gap-4">
-                <div><Label>Religion</Label>
+                <div><Label>{t("students.religion")}</Label>
                   <Select value={form.religion} onValueChange={(v) => updateForm({ religion: v })}>
-                    <SelectTrigger className="mt-1.5"><SelectValue placeholder="Select religion" /></SelectTrigger>
+                    <SelectTrigger className="mt-1.5"><SelectValue placeholder={t("common.select")} /></SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="christian">Christian</SelectItem>
-                      <SelectItem value="muslim">Muslim</SelectItem>
-                      <SelectItem value="other">Other</SelectItem>
+                      <SelectItem value="christian">{t("students.christian")}</SelectItem>
+                      <SelectItem value="muslim">{t("students.muslim")}</SelectItem>
+                      <SelectItem value="other">{t("students.other")}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
-                <div><Label>Special Talent</Label><Input className="mt-1.5" value={form.specialTalent} onChange={(e) => updateForm({ specialTalent: e.target.value })} placeholder="e.g., Football, Music, Art" /></div>
+                <div><Label>{t("students.specialTalent")}</Label><Input className="mt-1.5" value={form.specialTalent} onChange={(e) => updateForm({ specialTalent: e.target.value })} /></div>
               </div>
               <div className="grid grid-cols-1 gap-4">
-                <div><Label>Class</Label>
+                <div><Label>{t("common.class")}</Label>
                   {classes.length > 0 ? (
                     <Select value={form.className} onValueChange={(v) => updateForm({ className: v })}>
-                      <SelectTrigger className="mt-1.5"><SelectValue placeholder="Select class" /></SelectTrigger>
+                      <SelectTrigger className="mt-1.5"><SelectValue placeholder={t("common.selectClass")} /></SelectTrigger>
                       <SelectContent>
                         {classes.map((c: any) => <SelectItem key={c.id} value={c.name}>{c.name}</SelectItem>)}
                       </SelectContent>
                     </Select>
                   ) : (
-                    <Input className="mt-1.5" value={form.className} onChange={(e) => updateForm({ className: e.target.value })} placeholder="e.g. P1, S2, Baby Class" />
+                    <Input className="mt-1.5" value={form.className} onChange={(e) => updateForm({ className: e.target.value })} />
                   )}
                 </div>
               </div>
             </TabsContent>
 
-            {/* GUARDIAN */}
             <TabsContent value="guardian" className="space-y-4 mt-4">
-              <div className="flex items-center gap-2 text-sm font-medium"><Users className="h-4 w-4 text-muted-foreground" /> Guardian / Parent Information</div>
+              <div className="flex items-center gap-2 text-sm font-medium"><Users className="h-4 w-4 text-muted-foreground" /> {t("students.guardianInfo")}</div>
               <Separator />
               <div className="grid grid-cols-2 gap-4">
-                <div><Label>Guardian Name *</Label><Input className="mt-1.5" value={form.guardianName} onChange={(e) => updateForm({ guardianName: e.target.value })} placeholder="Full name" /></div>
-                <div><Label>Relationship</Label>
+                <div><Label>{t("students.guardianName")} *</Label><Input className="mt-1.5" value={form.guardianName} onChange={(e) => updateForm({ guardianName: e.target.value })} /></div>
+                <div><Label>{t("students.relationship")}</Label>
                   <Select value={form.guardianRelationship} onValueChange={(v) => updateForm({ guardianRelationship: v })}>
-                    <SelectTrigger className="mt-1.5"><SelectValue placeholder="Select" /></SelectTrigger>
+                    <SelectTrigger className="mt-1.5"><SelectValue placeholder={t("common.select")} /></SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="father">Father</SelectItem>
-                      <SelectItem value="mother">Mother</SelectItem>
-                      <SelectItem value="guardian">Guardian</SelectItem>
-                      <SelectItem value="uncle">Uncle</SelectItem>
-                      <SelectItem value="aunt">Aunt</SelectItem>
-                      <SelectItem value="other">Other</SelectItem>
+                      <SelectItem value="father">{t("students.father")}</SelectItem>
+                      <SelectItem value="mother">{t("students.mother")}</SelectItem>
+                      <SelectItem value="guardian">{t("students.guardian")}</SelectItem>
+                      <SelectItem value="uncle">{t("students.uncle")}</SelectItem>
+                      <SelectItem value="aunt">{t("students.aunt")}</SelectItem>
+                      <SelectItem value="other">{t("students.other")}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
-                <div><Label>Phone *</Label><Input className="mt-1.5" value={form.guardianPhone} onChange={(e) => updateForm({ guardianPhone: e.target.value })} placeholder="+256..." /></div>
-                <div><Label>Email</Label><Input className="mt-1.5" value={form.guardianEmail} onChange={(e) => updateForm({ guardianEmail: e.target.value })} placeholder="email@example.com" /></div>
+                <div><Label>{t("common.phone")} *</Label><Input className="mt-1.5" value={form.guardianPhone} onChange={(e) => updateForm({ guardianPhone: e.target.value })} /></div>
+                <div><Label>{t("common.email")}</Label><Input className="mt-1.5" value={form.guardianEmail} onChange={(e) => updateForm({ guardianEmail: e.target.value })} /></div>
               </div>
-              <div><Label>Occupation</Label><Input className="mt-1.5" value={form.guardianOccupation} onChange={(e) => updateForm({ guardianOccupation: e.target.value })} /></div>
-              <div><Label>Residential Address</Label><Textarea className="mt-1.5" value={form.guardianAddress} onChange={(e) => updateForm({ guardianAddress: e.target.value })} placeholder="Home address" /></div>
+              <div><Label>{t("students.occupation")}</Label><Input className="mt-1.5" value={form.guardianOccupation} onChange={(e) => updateForm({ guardianOccupation: e.target.value })} /></div>
+              <div><Label>{t("students.address")}</Label><Textarea className="mt-1.5" value={form.guardianAddress} onChange={(e) => updateForm({ guardianAddress: e.target.value })} /></div>
             </TabsContent>
 
-            {/* ACADEMIC RECORDS */}
             <TabsContent value="academic" className="space-y-4 mt-4">
-              <div className="flex items-center gap-2 text-sm font-medium"><FileText className="h-4 w-4 text-muted-foreground" /> Previous Academic Records</div>
+              <div className="flex items-center gap-2 text-sm font-medium"><FileText className="h-4 w-4 text-muted-foreground" /> {t("students.academicRecords")}</div>
               <Separator />
-              <div><Label>Previous School</Label><Input className="mt-1.5" value={form.previousSchool} onChange={(e) => updateForm({ previousSchool: e.target.value })} placeholder="Name of previous school" /></div>
-              <div><Label>Previous Class / Grade</Label><Input className="mt-1.5" value={form.previousClass} onChange={(e) => updateForm({ previousClass: e.target.value })} /></div>
-              <div><Label>Reason for Leaving</Label><Textarea className="mt-1.5" value={form.reasonForLeaving} onChange={(e) => updateForm({ reasonForLeaving: e.target.value })} placeholder="Why the student left the previous school" /></div>
+              <div><Label>{t("students.previousSchool")}</Label><Input className="mt-1.5" value={form.previousSchool} onChange={(e) => updateForm({ previousSchool: e.target.value })} /></div>
+              <div><Label>{t("students.previousClass")}</Label><Input className="mt-1.5" value={form.previousClass} onChange={(e) => updateForm({ previousClass: e.target.value })} /></div>
+              <div><Label>{t("students.reasonForLeaving")}</Label><Textarea className="mt-1.5" value={form.reasonForLeaving} onChange={(e) => updateForm({ reasonForLeaving: e.target.value })} /></div>
             </TabsContent>
 
-            {/* MEDICAL */}
             <TabsContent value="medical" className="space-y-4 mt-4">
-              <div className="flex items-center gap-2 text-sm font-medium"><Heart className="h-4 w-4 text-muted-foreground" /> Medical Information</div>
+              <div className="flex items-center gap-2 text-sm font-medium"><Heart className="h-4 w-4 text-muted-foreground" /> {t("students.medicalInfo")}</div>
               <Separator />
               <div className="grid grid-cols-2 gap-4">
-                <div><Label>Blood Group</Label>
+                <div><Label>{t("students.bloodGroup")}</Label>
                   <Select value={form.bloodGroup} onValueChange={(v) => updateForm({ bloodGroup: v })}>
-                    <SelectTrigger className="mt-1.5"><SelectValue placeholder="Select" /></SelectTrigger>
+                    <SelectTrigger className="mt-1.5"><SelectValue placeholder={t("common.select")} /></SelectTrigger>
                     <SelectContent>
                       {["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"].map((bg) => (
                         <SelectItem key={bg} value={bg}>{bg}</SelectItem>
@@ -364,22 +356,20 @@ export default function Students() {
                     </SelectContent>
                   </Select>
                 </div>
-                <div><Label>Allergies</Label><Input className="mt-1.5" value={form.allergies} onChange={(e) => updateForm({ allergies: e.target.value })} placeholder="e.g., Peanuts, Dust" /></div>
+                <div><Label>{t("students.allergies")}</Label><Input className="mt-1.5" value={form.allergies} onChange={(e) => updateForm({ allergies: e.target.value })} /></div>
               </div>
-              <div><Label>Medical Conditions</Label><Textarea className="mt-1.5" value={form.medicalConditions} onChange={(e) => updateForm({ medicalConditions: e.target.value })} placeholder="Any chronic or special conditions" /></div>
+              <div><Label>{t("students.medicalConditions")}</Label><Textarea className="mt-1.5" value={form.medicalConditions} onChange={(e) => updateForm({ medicalConditions: e.target.value })} /></div>
               <Separator />
-              <div className="flex items-center gap-2 text-sm font-medium">Emergency Contact</div>
+              <div className="flex items-center gap-2 text-sm font-medium">{t("students.emergencyContact")}</div>
               <div className="grid grid-cols-2 gap-4">
-                <div><Label>Contact Name</Label><Input className="mt-1.5" value={form.emergencyContact} onChange={(e) => updateForm({ emergencyContact: e.target.value })} /></div>
-                <div><Label>Contact Phone</Label><Input className="mt-1.5" value={form.emergencyPhone} onChange={(e) => updateForm({ emergencyPhone: e.target.value })} placeholder="+256..." /></div>
+                <div><Label>{t("students.emergencyContact")}</Label><Input className="mt-1.5" value={form.emergencyContact} onChange={(e) => updateForm({ emergencyContact: e.target.value })} /></div>
+                <div><Label>{t("students.emergencyPhone")}</Label><Input className="mt-1.5" value={form.emergencyPhone} onChange={(e) => updateForm({ emergencyPhone: e.target.value })} /></div>
               </div>
             </TabsContent>
 
-            {/* DOCUMENTS & IDs */}
             <TabsContent value="documents" className="space-y-4 mt-4">
-              <div className="flex items-center gap-2 text-sm font-medium"><FileText className="h-4 w-4 text-muted-foreground" /> Documents & IDs</div>
+              <div className="flex items-center gap-2 text-sm font-medium"><FileText className="h-4 w-4 text-muted-foreground" /> {t("students.documents")}</div>
               <Separator />
-              <p className="text-sm text-muted-foreground">Track which documents have been submitted:</p>
               <div className="space-y-3">
                 {[
                   { key: "hasbirthCertificate", label: "Birth Certificate" },
@@ -403,40 +393,36 @@ export default function Students() {
               </div>
             </TabsContent>
 
-            {/* FEES */}
             <TabsContent value="fees" className="space-y-4 mt-4">
-              <div className="flex items-center gap-2 text-sm font-medium"><CreditCard className="h-4 w-4 text-muted-foreground" /> Fee Information</div>
+              <div className="flex items-center gap-2 text-sm font-medium"><CreditCard className="h-4 w-4 text-muted-foreground" /> {t("students.fees")}</div>
               <Separator />
               <Card><CardContent className="py-8 text-center">
                 <CreditCard className="mx-auto mb-3 h-10 w-10 text-muted-foreground/30" />
                 <p className="text-sm text-muted-foreground">Fee assignment will be linked after enrollment</p>
-                <p className="text-xs text-muted-foreground mt-1">Fee structures are managed in the Fees module</p>
               </CardContent></Card>
             </TabsContent>
 
-            {/* REQUIREMENTS */}
             <TabsContent value="requirements" className="space-y-4 mt-4">
-              <div className="flex items-center gap-2 text-sm font-medium"><ClipboardList className="h-4 w-4 text-muted-foreground" /> Term Requirements</div>
+              <div className="flex items-center gap-2 text-sm font-medium"><ClipboardList className="h-4 w-4 text-muted-foreground" /> {t("students.requirements")}</div>
               <Separator />
               <Card><CardContent className="py-8 text-center">
                 <ClipboardList className="mx-auto mb-3 h-10 w-10 text-muted-foreground/30" />
                 <p className="text-sm text-muted-foreground">Term requirements will appear here after enrollment</p>
-                <p className="text-xs text-muted-foreground mt-1">Define requirements per class in Settings</p>
               </CardContent></Card>
             </TabsContent>
           </Tabs>
 
           <DialogFooter className="gap-2 sm:gap-0">
-            <Button variant="outline" onClick={() => setDialogOpen(false)}>Cancel</Button>
+            <Button variant="outline" onClick={() => setDialogOpen(false)}>{t("common.cancel")}</Button>
             <Button onClick={handleSave} disabled={!form.fullName}>
               <UserPlus className="mr-2 h-4 w-4" />
-              {editingId ? "Save Changes" : `Enroll ${isKindergarten ? "Pupil" : "Student"}`}
+              {editingId ? t("common.save") : `${t("students.enroll")} ${isKindergarten ? t("students.pupil") : t("students.student")}`}
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
-      {/* ========== VIEW STUDENT DIALOG ========== */}
+      {/* VIEW STUDENT DIALOG */}
       <Dialog open={!!viewStudent} onOpenChange={() => setViewStudent(null)}>
         <DialogContent className="max-w-lg">
           {viewStudent && (
@@ -446,23 +432,23 @@ export default function Students() {
               </DialogHeader>
               <div className="space-y-4">
                 <div className="grid grid-cols-2 gap-3 text-sm">
-                  <div><span className="text-muted-foreground">Admission No:</span> <span className="font-medium ml-1">{viewStudent.admissionNumber}</span></div>
-                  <div><span className="text-muted-foreground">Class:</span> <span className="font-medium ml-1">{viewStudent.className || "—"}</span></div>
-                  <div><span className="text-muted-foreground">Gender:</span> <span className="font-medium ml-1 capitalize">{viewStudent.gender || "—"}</span></div>
-                  <div><span className="text-muted-foreground">DOB:</span> <span className="font-medium ml-1">{viewStudent.dob || "—"}</span></div>
-                  <div><span className="text-muted-foreground">Nationality:</span> <span className="font-medium ml-1">{viewStudent.nationality || "—"}</span></div>
-                  <div><span className="text-muted-foreground">Religion:</span> <span className="font-medium ml-1 capitalize">{viewStudent.religion || "—"}</span></div>
-                  <div><span className="text-muted-foreground">Status:</span> <Badge variant="outline" className={`ml-1 text-xs ${statusColor(viewStudent.status)}`}>{viewStudent.status}</Badge></div>
+                  <div><span className="text-muted-foreground">{t("students.admNo")}:</span> <span className="font-medium ml-1">{viewStudent.admissionNumber}</span></div>
+                  <div><span className="text-muted-foreground">{t("common.class")}:</span> <span className="font-medium ml-1">{viewStudent.className || "—"}</span></div>
+                  <div><span className="text-muted-foreground">{t("common.gender")}:</span> <span className="font-medium ml-1 capitalize">{viewStudent.gender || "—"}</span></div>
+                  <div><span className="text-muted-foreground">{t("students.dob")}:</span> <span className="font-medium ml-1">{viewStudent.dob || "—"}</span></div>
+                  <div><span className="text-muted-foreground">{t("students.nationality")}:</span> <span className="font-medium ml-1">{viewStudent.nationality || "—"}</span></div>
+                  <div><span className="text-muted-foreground">{t("students.religion")}:</span> <span className="font-medium ml-1 capitalize">{viewStudent.religion || "—"}</span></div>
+                  <div><span className="text-muted-foreground">{t("common.status")}:</span> <Badge variant="outline" className={`ml-1 text-xs ${statusColor(viewStudent.status)}`}>{t(`students.${viewStudent.status}`)}</Badge></div>
                 </div>
                 {(viewStudent.guardianName || viewStudent.guardianPhone) && (
                   <>
                     <Separator />
                     <div>
-                      <p className="text-sm font-medium mb-2">Guardian</p>
+                      <p className="text-sm font-medium mb-2">{t("students.guardian")}</p>
                       <div className="grid grid-cols-2 gap-2 text-sm">
-                        <div><span className="text-muted-foreground">Name:</span> <span className="ml-1">{viewStudent.guardianName || "—"}</span></div>
-                        <div><span className="text-muted-foreground">Phone:</span> <span className="ml-1">{viewStudent.guardianPhone || "—"}</span></div>
-                        <div><span className="text-muted-foreground">Relationship:</span> <span className="ml-1 capitalize">{viewStudent.guardianRelationship || "—"}</span></div>
+                        <div><span className="text-muted-foreground">{t("common.name")}:</span> <span className="ml-1">{viewStudent.guardianName || "—"}</span></div>
+                        <div><span className="text-muted-foreground">{t("common.phone")}:</span> <span className="ml-1">{viewStudent.guardianPhone || "—"}</span></div>
+                        <div><span className="text-muted-foreground">{t("students.relationship")}:</span> <span className="ml-1 capitalize">{viewStudent.guardianRelationship || "—"}</span></div>
                       </div>
                     </div>
                   </>
@@ -471,12 +457,12 @@ export default function Students() {
                   <>
                     <Separator />
                     <div>
-                      <p className="text-sm font-medium mb-2">Medical</p>
+                      <p className="text-sm font-medium mb-2">{t("students.medical")}</p>
                       <div className="grid grid-cols-2 gap-2 text-sm">
-                        <div><span className="text-muted-foreground">Blood Group:</span> <span className="ml-1">{viewStudent.bloodGroup || "—"}</span></div>
-                        <div><span className="text-muted-foreground">Allergies:</span> <span className="ml-1">{viewStudent.allergies || "—"}</span></div>
+                        <div><span className="text-muted-foreground">{t("students.bloodGroup")}:</span> <span className="ml-1">{viewStudent.bloodGroup || "—"}</span></div>
+                        <div><span className="text-muted-foreground">{t("students.allergies")}:</span> <span className="ml-1">{viewStudent.allergies || "—"}</span></div>
                       </div>
-                      {viewStudent.medicalConditions && <p className="text-sm mt-1"><span className="text-muted-foreground">Conditions:</span> {viewStudent.medicalConditions}</p>}
+                      {viewStudent.medicalConditions && <p className="text-sm mt-1"><span className="text-muted-foreground">{t("students.medicalConditions")}:</span> {viewStudent.medicalConditions}</p>}
                     </div>
                   </>
                 )}

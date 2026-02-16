@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Plus, Mail, Printer } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface Letter {
   id: string;
@@ -20,6 +21,7 @@ interface Letter {
 }
 
 export default function Letters() {
+  const { t } = useLanguage();
   const [letters, setLetters] = useState<Letter[]>(() => {
     const saved = localStorage.getItem("letters");
     return saved ? JSON.parse(saved) : [];
@@ -41,36 +43,36 @@ export default function Letters() {
     <div className="space-y-6">
       <div className="page-header">
         <div>
-          <h1 className="page-title">Letters</h1>
-          <p className="page-description">Generate school letters and notices</p>
+          <h1 className="page-title">{t("letters.title")}</h1>
+          <p className="page-description">{t("letters.description")}</p>
         </div>
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger asChild>
-            <Button size="sm"><Plus className="mr-2 h-4 w-4" /> Create Letter</Button>
+            <Button size="sm"><Plus className="mr-2 h-4 w-4" /> {t("letters.createLetter")}</Button>
           </DialogTrigger>
           <DialogContent className="max-w-lg">
-            <DialogHeader><DialogTitle>Create Letter</DialogTitle></DialogHeader>
+            <DialogHeader><DialogTitle>{t("letters.createLetter")}</DialogTitle></DialogHeader>
             <div className="grid gap-4 py-2">
               <div className="grid grid-cols-2 gap-4">
-                <div><Label>Letter Type *</Label>
+                <div><Label>{t("letters.letterType")} *</Label>
                   <Select value={form.type} onValueChange={(v) => setForm({ ...form, type: v })}>
-                    <SelectTrigger className="mt-1.5"><SelectValue placeholder="Select" /></SelectTrigger>
+                    <SelectTrigger className="mt-1.5"><SelectValue placeholder={t("common.select")} /></SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="admission">Admission Letter</SelectItem>
-                      <SelectItem value="fee_reminder">Fee Reminder</SelectItem>
-                      <SelectItem value="suspension">Suspension Letter</SelectItem>
-                      <SelectItem value="expulsion">Expulsion Letter</SelectItem>
-                      <SelectItem value="general">General Notice</SelectItem>
-                      <SelectItem value="recommendation">Recommendation</SelectItem>
+                      <SelectItem value="admission">{t("letters.admission")}</SelectItem>
+                      <SelectItem value="fee_reminder">{t("letters.feeReminder")}</SelectItem>
+                      <SelectItem value="suspension">{t("letters.suspension")}</SelectItem>
+                      <SelectItem value="expulsion">{t("letters.expulsion")}</SelectItem>
+                      <SelectItem value="general">{t("letters.general")}</SelectItem>
+                      <SelectItem value="recommendation">{t("letters.recommendation")}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
-                <div><Label>Recipient</Label><Input className="mt-1.5" value={form.recipient} onChange={(e) => setForm({ ...form, recipient: e.target.value })} placeholder="Student/Parent name" /></div>
+                <div><Label>{t("letters.recipient")}</Label><Input className="mt-1.5" value={form.recipient} onChange={(e) => setForm({ ...form, recipient: e.target.value })} /></div>
               </div>
-              <div><Label>Subject *</Label><Input className="mt-1.5" value={form.subject} onChange={(e) => setForm({ ...form, subject: e.target.value })} /></div>
-              <div><Label>Body</Label><Textarea className="mt-1.5 min-h-[120px]" value={form.body} onChange={(e) => setForm({ ...form, body: e.target.value })} /></div>
+              <div><Label>{t("letters.subject")} *</Label><Input className="mt-1.5" value={form.subject} onChange={(e) => setForm({ ...form, subject: e.target.value })} /></div>
+              <div><Label>{t("letters.body")}</Label><Textarea className="mt-1.5 min-h-[120px]" value={form.body} onChange={(e) => setForm({ ...form, body: e.target.value })} /></div>
             </div>
-            <Button onClick={handleAdd} disabled={!form.type || !form.subject} className="w-full">Create Letter</Button>
+            <Button onClick={handleAdd} disabled={!form.type || !form.subject} className="w-full">{t("letters.createLetter")}</Button>
           </DialogContent>
         </Dialog>
       </div>
@@ -78,13 +80,13 @@ export default function Letters() {
       {letters.length === 0 ? (
         <Card><CardContent className="flex flex-col items-center justify-center py-16">
           <Mail className="mb-3 h-12 w-12 text-muted-foreground/30" />
-          <p className="text-sm text-muted-foreground">No letters created yet</p>
+          <p className="text-sm text-muted-foreground">{t("letters.noLetters")}</p>
         </CardContent></Card>
       ) : (
         <Card><CardContent className="p-0">
           <Table>
             <TableHeader><TableRow>
-              <TableHead>Type</TableHead><TableHead>Subject</TableHead><TableHead>Recipient</TableHead><TableHead>Date</TableHead><TableHead></TableHead>
+              <TableHead>{t("common.type")}</TableHead><TableHead>{t("letters.subject")}</TableHead><TableHead>{t("letters.recipient")}</TableHead><TableHead>{t("common.date")}</TableHead><TableHead></TableHead>
             </TableRow></TableHeader>
             <TableBody>
               {letters.map((l) => (

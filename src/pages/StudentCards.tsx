@@ -9,6 +9,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Printer, Search, CreditCard, Users, Filter, GraduationCap, IdCard } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
 import { useSchool } from "@/contexts/SchoolContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface Student {
   id: string;
@@ -23,6 +24,7 @@ interface Student {
 
 export default function StudentCards() {
   const { settings } = useSchool();
+  const { t } = useLanguage();
   const printRef = useRef<HTMLDivElement>(null);
   const [students] = useState<Student[]>(() => {
     const saved = localStorage.getItem("students");
@@ -134,8 +136,8 @@ export default function StudentCards() {
     <div className="space-y-6">
       <div className="page-header">
         <div>
-          <h1 className="page-title">Student ID Cards</h1>
-          <p className="page-description">Generate and print student ID cards with payment barcodes</p>
+          <h1 className="page-title">{t("studentCards.title")}</h1>
+          <p className="page-description">{t("studentCards.description")}</p>
         </div>
         <div className="flex gap-2">
           <Button
@@ -144,21 +146,20 @@ export default function StudentCards() {
             onClick={() => setShowPreview(!showPreview)}
             disabled={selectedStudents.length === 0}
           >
-            {showPreview ? "Show List" : "Preview Cards"}
+            {showPreview ? t("studentCards.showList") : t("studentCards.previewCards")}
           </Button>
           <Button size="sm" onClick={handlePrint} disabled={selectedStudents.length === 0}>
-            <Printer className="mr-2 h-4 w-4" /> Print ({selectedStudents.length})
+            <Printer className="mr-2 h-4 w-4" /> {t("common.print")} ({selectedStudents.length})
           </Button>
         </div>
       </div>
 
-      {/* Stats */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {[
-          { label: "Total", value: students.length, icon: Users, color: "text-primary" },
-          { label: "Selected", value: selectedStudents.length, icon: CreditCard, color: "text-success" },
-          { label: "Filtered", value: filtered.length, icon: Filter, color: "text-info" },
-          { label: "Classes", value: uniqueClasses.length, icon: GraduationCap, color: "text-accent" },
+          { label: t("common.total"), value: students.length, icon: Users, color: "text-primary" },
+          { label: t("studentCards.selected"), value: selectedStudents.length, icon: CreditCard, color: "text-success" },
+          { label: t("studentCards.filtered"), value: filtered.length, icon: Filter, color: "text-info" },
+          { label: t("classes.title"), value: uniqueClasses.length, icon: GraduationCap, color: "text-accent" },
         ].map((stat) => (
           <div key={stat.label} className="stat-card">
             <div className="flex items-center justify-between">
@@ -174,22 +175,15 @@ export default function StudentCards() {
         ))}
       </div>
 
-      {/* Quick Select by Class */}
       {uniqueClasses.length > 0 && (
         <Card>
           <CardContent className="p-4">
-            <p className="text-sm font-medium mb-3">Quick Select by Class</p>
+            <p className="text-sm font-medium mb-3">{t("studentCards.quickSelect")}</p>
             <div className="flex flex-wrap gap-2">
               {uniqueClasses.map((cls) => {
                 const count = students.filter((s) => s.className === cls).length;
                 return (
-                  <Button
-                    key={cls}
-                    variant="outline"
-                    size="sm"
-                    className="text-xs"
-                    onClick={() => selectByClass(cls)}
-                  >
+                  <Button key={cls} variant="outline" size="sm" className="text-xs" onClick={() => selectByClass(cls)}>
                     {cls} ({count})
                   </Button>
                 );
@@ -200,14 +194,12 @@ export default function StudentCards() {
       )}
 
       {showPreview ? (
-        /* ========= CARD PREVIEW ========= */
         <>
           <div ref={printRef}>
-            <h2 className="text-lg font-semibold mb-4">Card Preview</h2>
+            <h2 className="text-lg font-semibold mb-4">{t("studentCards.cardPreview")}</h2>
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {selectedStudents.map((student) => (
                 <div key={student.id} className="space-y-4">
-                  {/* Front of Card */}
                   <Card className="overflow-hidden border-2 border-primary">
                     <div className="bg-gradient-to-r from-primary to-primary/80 p-3 flex items-center gap-3">
                       <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-foreground/20 text-primary-foreground font-bold text-sm">
@@ -215,7 +207,7 @@ export default function StudentCards() {
                       </div>
                       <div>
                         <h3 className="text-sm font-bold text-primary-foreground">{settings.schoolName}</h3>
-                        <p className="text-[9px] uppercase tracking-[1.5px] text-primary-foreground/80">Student ID Card</p>
+                        <p className="text-[9px] uppercase tracking-[1.5px] text-primary-foreground/80">{t("studentCards.title")}</p>
                       </div>
                     </div>
                     <CardContent className="p-3">
@@ -225,36 +217,32 @@ export default function StudentCards() {
                         </div>
                         <div className="flex-1 min-w-0 space-y-1">
                           <div className="flex">
-                            <span className="text-[8px] uppercase text-muted-foreground w-14 shrink-0">Full Name</span>
+                            <span className="text-[8px] uppercase text-muted-foreground w-14 shrink-0">{t("students.fullName")}</span>
                             <span className="text-[10px] font-semibold truncate">{student.fullName}</span>
                           </div>
                           <div className="flex gap-4">
                             <div className="flex">
-                              <span className="text-[8px] uppercase text-muted-foreground w-14 shrink-0">Adm. No</span>
+                              <span className="text-[8px] uppercase text-muted-foreground w-14 shrink-0">{t("students.admNo")}</span>
                               <span className="text-[10px] font-semibold">{student.admissionNumber}</span>
                             </div>
                             <div className="flex">
-                              <span className="text-[8px] uppercase text-muted-foreground w-10 shrink-0">Class</span>
+                              <span className="text-[8px] uppercase text-muted-foreground w-10 shrink-0">{t("common.class")}</span>
                               <span className="text-[10px] font-semibold">{student.className}</span>
                             </div>
                           </div>
                           <div className="flex gap-4">
                             <div className="flex">
-                              <span className="text-[8px] uppercase text-muted-foreground w-14 shrink-0">DOB</span>
+                              <span className="text-[8px] uppercase text-muted-foreground w-14 shrink-0">{t("students.dob")}</span>
                               <span className="text-[10px] font-semibold">—</span>
                             </div>
                             <div className="flex">
-                              <span className="text-[8px] uppercase text-muted-foreground w-14 shrink-0">Gender</span>
+                              <span className="text-[8px] uppercase text-muted-foreground w-14 shrink-0">{t("common.gender")}</span>
                               <span className="text-[10px] font-semibold capitalize">{student.gender || "—"}</span>
                             </div>
                           </div>
                         </div>
                         <div className="flex flex-col items-center shrink-0">
-                          <QRCodeSVG
-                            value={`STUDENT:${student.admissionNumber}:${student.fullName}`}
-                            size={56}
-                            level="M"
-                          />
+                          <QRCodeSVG value={`STUDENT:${student.admissionNumber}:${student.fullName}`} size={56} level="M" />
                           <span className="text-[7px] uppercase text-muted-foreground mt-1 tracking-wide">Scan for Check-in</span>
                         </div>
                       </div>
@@ -266,7 +254,6 @@ export default function StudentCards() {
                     </div>
                   </Card>
 
-                  {/* Back of Card (Payment Barcode) */}
                   <Card className="border">
                     <CardContent className="py-5 text-center space-y-3">
                       <div>
@@ -274,11 +261,7 @@ export default function StudentCards() {
                         <p className="text-[8px] text-muted-foreground">Scan this barcode at the bursar's office to process fee payments</p>
                       </div>
                       <div className="flex justify-center">
-                        <QRCodeSVG
-                          value={`FEE:${student.admissionNumber}`}
-                          size={96}
-                          level="H"
-                        />
+                        <QRCodeSVG value={`FEE:${student.admissionNumber}`} size={96} level="H" />
                       </div>
                       <p className="text-[10px] font-semibold">{student.admissionNumber}</p>
                       <div className="pt-2 border-t space-y-0.5">
@@ -297,23 +280,22 @@ export default function StudentCards() {
 
             {students.length > selectedStudents.length && (
               <p className="text-center text-sm text-muted-foreground mt-6">
-                + {students.length - selectedStudents.length} more cards available
+                + {students.length - selectedStudents.length} {t("studentCards.moreCards")}
               </p>
             )}
           </div>
         </>
       ) : (
-        /* ========= STUDENT LIST ========= */
         <>
           <div className="flex items-center gap-3">
             <div className="relative flex-1 max-w-sm">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <Input placeholder="Search students..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
+              <Input placeholder={t("studentCards.searchPlaceholder")} value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
             </div>
             <Select value={classFilter} onValueChange={setClassFilter}>
-              <SelectTrigger className="w-40"><SelectValue placeholder="All Classes" /></SelectTrigger>
+              <SelectTrigger className="w-40"><SelectValue placeholder={t("common.allClasses")} /></SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Classes</SelectItem>
+                <SelectItem value="all">{t("common.allClasses")}</SelectItem>
                 {uniqueClasses.map((cls) => (
                   <SelectItem key={cls} value={cls}>{cls}</SelectItem>
                 ))}
@@ -324,8 +306,8 @@ export default function StudentCards() {
           {students.length === 0 ? (
             <Card><CardContent className="flex flex-col items-center justify-center py-16">
               <IdCard className="mb-3 h-12 w-12 text-muted-foreground/30" />
-              <p className="text-sm text-muted-foreground">No students enrolled yet</p>
-              <p className="text-xs text-muted-foreground mt-1">Enroll students first to generate ID cards</p>
+              <p className="text-sm text-muted-foreground">{t("studentCards.noStudents")}</p>
+              <p className="text-xs text-muted-foreground mt-1">{t("studentCards.enrollFirst")}</p>
             </CardContent></Card>
           ) : (
             <Card><CardContent className="p-0">
@@ -338,20 +320,17 @@ export default function StudentCards() {
                         onCheckedChange={toggleAll}
                       />
                     </TableHead>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Admission No.</TableHead>
-                    <TableHead>Class</TableHead>
-                    <TableHead>Gender</TableHead>
+                    <TableHead>{t("common.name")}</TableHead>
+                    <TableHead>{t("students.admNo")}</TableHead>
+                    <TableHead>{t("common.class")}</TableHead>
+                    <TableHead>{t("common.gender")}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {filtered.map((s) => (
                     <TableRow key={s.id} className="cursor-pointer" onClick={() => toggleSelect(s.id)}>
                       <TableCell>
-                        <Checkbox
-                          checked={selectedIds.has(s.id)}
-                          onCheckedChange={() => toggleSelect(s.id)}
-                        />
+                        <Checkbox checked={selectedIds.has(s.id)} onCheckedChange={() => toggleSelect(s.id)} />
                       </TableCell>
                       <TableCell className="font-medium">{s.fullName}</TableCell>
                       <TableCell>{s.admissionNumber}</TableCell>

@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Plus, Calendar, Trash2 } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface CalendarEvent {
   id: string;
@@ -25,6 +26,7 @@ const typeColors: Record<string, string> = {
 };
 
 export default function TermCalendar() {
+  const { t } = useLanguage();
   const [events, setEvents] = useState<CalendarEvent[]>(() => {
     const saved = localStorage.getItem("calendar_events");
     return saved ? JSON.parse(saved) : [];
@@ -52,35 +54,35 @@ export default function TermCalendar() {
     <div className="space-y-6">
       <div className="page-header">
         <div>
-          <h1 className="page-title">Term Calendar</h1>
-          <p className="page-description">Events, holidays, and term dates</p>
+          <h1 className="page-title">{t("calendar.title")}</h1>
+          <p className="page-description">{t("calendar.description")}</p>
         </div>
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger asChild>
-            <Button size="sm"><Plus className="mr-2 h-4 w-4" /> Add Event</Button>
+            <Button size="sm"><Plus className="mr-2 h-4 w-4" /> {t("calendar.addEvent")}</Button>
           </DialogTrigger>
           <DialogContent>
-            <DialogHeader><DialogTitle>Add Calendar Event</DialogTitle></DialogHeader>
+            <DialogHeader><DialogTitle>{t("calendar.addEvent")}</DialogTitle></DialogHeader>
             <div className="grid gap-4 py-2">
-              <div><Label>Event Title *</Label><Input className="mt-1.5" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} /></div>
+              <div><Label>{t("calendar.eventTitle")} *</Label><Input className="mt-1.5" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} /></div>
               <div className="grid grid-cols-2 gap-4">
-                <div><Label>Date *</Label><Input type="date" className="mt-1.5" value={form.date} onChange={(e) => setForm({ ...form, date: e.target.value })} /></div>
-                <div><Label>Type</Label>
+                <div><Label>{t("common.date")} *</Label><Input type="date" className="mt-1.5" value={form.date} onChange={(e) => setForm({ ...form, date: e.target.value })} /></div>
+                <div><Label>{t("common.type")}</Label>
                   <Select value={form.type} onValueChange={(v) => setForm({ ...form, type: v })}>
-                    <SelectTrigger className="mt-1.5"><SelectValue placeholder="Select" /></SelectTrigger>
+                    <SelectTrigger className="mt-1.5"><SelectValue placeholder={t("common.select")} /></SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="holiday">Holiday</SelectItem>
-                      <SelectItem value="exam">Exam</SelectItem>
-                      <SelectItem value="meeting">Meeting</SelectItem>
-                      <SelectItem value="sports">Sports Day</SelectItem>
-                      <SelectItem value="event">General Event</SelectItem>
+                      <SelectItem value="holiday">{t("calendar.holiday")}</SelectItem>
+                      <SelectItem value="exam">{t("calendar.exam")}</SelectItem>
+                      <SelectItem value="meeting">{t("calendar.meeting")}</SelectItem>
+                      <SelectItem value="sports">{t("calendar.sports")}</SelectItem>
+                      <SelectItem value="event">{t("calendar.event")}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
               </div>
-              <div><Label>Term</Label><Input className="mt-1.5" value={form.term} onChange={(e) => setForm({ ...form, term: e.target.value })} placeholder="e.g. Term 1, 2026" /></div>
+              <div><Label>{t("exams.term")}</Label><Input className="mt-1.5" value={form.term} onChange={(e) => setForm({ ...form, term: e.target.value })} /></div>
             </div>
-            <Button onClick={handleAdd} disabled={!form.title || !form.date} className="w-full">Add Event</Button>
+            <Button onClick={handleAdd} disabled={!form.title || !form.date} className="w-full">{t("calendar.addEvent")}</Button>
           </DialogContent>
         </Dialog>
       </div>
@@ -88,7 +90,7 @@ export default function TermCalendar() {
       {events.length === 0 ? (
         <Card><CardContent className="flex flex-col items-center justify-center py-16">
           <Calendar className="mb-3 h-12 w-12 text-muted-foreground/30" />
-          <p className="text-sm text-muted-foreground">No events scheduled yet</p>
+          <p className="text-sm text-muted-foreground">{t("calendar.noEvents")}</p>
         </CardContent></Card>
       ) : (
         <div className="space-y-3">
