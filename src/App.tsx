@@ -11,8 +11,24 @@ import Students from "./pages/Students";
 import Classes from "./pages/Classes";
 import Attendance from "./pages/Attendance";
 import Fees from "./pages/Fees";
+import Parents from "./pages/Parents";
+import Staff from "./pages/Staff";
+import Subjects from "./pages/Subjects";
+import Exams from "./pages/Exams";
+import ReportCards from "./pages/ReportCards";
+import ECDProgress from "./pages/ECDProgress";
+import Timetable from "./pages/Timetable";
+import Payroll from "./pages/Payroll";
+import Accounting from "./pages/Accounting";
+import Gate from "./pages/Gate";
+import Visitors from "./pages/Visitors";
+import Discipline from "./pages/Discipline";
+import Letters from "./pages/Letters";
+import Requisitions from "./pages/Requisitions";
+import TermCalendar from "./pages/TermCalendar";
+import Assets from "./pages/Assets";
+import Reports from "./pages/Reports";
 import SettingsPage from "./pages/Settings";
-import PlaceholderPage from "./pages/PlaceholderPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -38,23 +54,23 @@ function AppRoutes() {
         <Route path="/classes" element={<Classes />} />
         <Route path="/attendance" element={<Attendance />} />
         <Route path="/fees" element={<Fees />} />
-        <Route path="/parents" element={<PlaceholderPage title="Parents" description="Parent registry and portal" />} />
-        <Route path="/staff" element={<PlaceholderPage title="Staff" description="Employee management" />} />
-        <Route path="/subjects" element={<PlaceholderPage title="Subjects" description="Subject registry and assignments" />} />
-        <Route path="/exams" element={<PlaceholderPage title="Exams" description="Exam management and scheduling" />} />
-        <Route path="/report-cards" element={<PlaceholderPage title="Report Cards" description="Generate and print report cards" />} />
-        <Route path="/ecd-progress" element={<PlaceholderPage title="ECD Progress" description="Developmental progress tracking" />} />
-        <Route path="/timetable" element={<PlaceholderPage title="Timetable" description="Class schedules and period management" />} />
-        <Route path="/payroll" element={<PlaceholderPage title="Payroll" description="Salary and payroll processing" />} />
-        <Route path="/accounting" element={<PlaceholderPage title="Accounting" description="Financial management and ledger" />} />
-        <Route path="/gate" element={<PlaceholderPage title="Gate Check-in" description="QR scanning and arrival/departure tracking" />} />
-        <Route path="/visitors" element={<PlaceholderPage title="Visitor Register" description="Log and track school visitors" />} />
-        <Route path="/discipline" element={<PlaceholderPage title="Discipline Cases" description="Incident tracking and management" />} />
-        <Route path="/letters" element={<PlaceholderPage title="Letters" description="Generate school letters and notices" />} />
-        <Route path="/requisitions" element={<PlaceholderPage title="Requisitions" description="Supply requests and approvals" />} />
-        <Route path="/calendar" element={<PlaceholderPage title="Term Calendar" description="Events, holidays, and term dates" />} />
-        <Route path="/assets" element={<PlaceholderPage title="Assets" description="School asset registry and tracking" />} />
-        <Route path="/reports" element={<PlaceholderPage title="Reports" description="Financial and academic reports" />} />
+        <Route path="/parents" element={<Parents />} />
+        <Route path="/staff" element={<Staff />} />
+        <Route path="/subjects" element={<Subjects />} />
+        <Route path="/exams" element={<Exams />} />
+        <Route path="/report-cards" element={<ReportCards />} />
+        <Route path="/ecd-progress" element={<ECDProgress />} />
+        <Route path="/timetable" element={<Timetable />} />
+        <Route path="/payroll" element={<Payroll />} />
+        <Route path="/accounting" element={<Accounting />} />
+        <Route path="/gate" element={<Gate />} />
+        <Route path="/visitors" element={<Visitors />} />
+        <Route path="/discipline" element={<Discipline />} />
+        <Route path="/letters" element={<Letters />} />
+        <Route path="/requisitions" element={<Requisitions />} />
+        <Route path="/calendar" element={<TermCalendar />} />
+        <Route path="/assets" element={<Assets />} />
+        <Route path="/reports" element={<Reports />} />
         <Route path="/settings" element={<SettingsPage />} />
       </Route>
       <Route path="*" element={<NotFound />} />
