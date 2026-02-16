@@ -25,6 +25,16 @@ function initDatabase() {
 
   // Create all tables
   db.exec(`
+    -- Users (Authentication)
+    CREATE TABLE IF NOT EXISTS users (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      username TEXT UNIQUE NOT NULL,
+      password_hash TEXT NOT NULL,
+      full_name TEXT NOT NULL,
+      role TEXT DEFAULT 'teacher' CHECK(role IN ('admin','teacher')),
+      created_at TEXT DEFAULT (datetime('now'))
+    );
+
     -- School Settings
     CREATE TABLE IF NOT EXISTS settings (
       key TEXT PRIMARY KEY,

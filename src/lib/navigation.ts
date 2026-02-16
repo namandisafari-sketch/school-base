@@ -21,6 +21,7 @@ import {
   Award,
   IdCard,
   type LucideIcon,
+  Shield,
 } from "lucide-react";
 import { SchoolType } from "@/contexts/SchoolContext";
 
@@ -62,6 +63,7 @@ export const navigationItems: NavItem[] = [
   { title: "Term Calendar", url: "/calendar", icon: Calendar, schoolTypes: "all", group: "Admin" },
   { title: "Assets", url: "/assets", icon: Package, schoolTypes: "all", group: "Admin" },
   { title: "Reports", url: "/reports", icon: BarChart3, schoolTypes: "all", group: "Admin" },
+  { title: "User Management", url: "/users", icon: Shield, schoolTypes: "all", group: "System" },
   { title: "Settings", url: "/settings", icon: Settings, schoolTypes: "all", group: "System" },
 ];
 
