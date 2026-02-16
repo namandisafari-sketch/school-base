@@ -1,43 +1,40 @@
 import { useSchool } from "@/contexts/SchoolContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Users, ClipboardCheck, CreditCard, AlertTriangle, TrendingUp, UserPlus, DollarSign, Clock } from "lucide-react";
 
-const stats = [
-  { label: "Total Students", value: "0", icon: Users, change: "Start enrolling" },
-  { label: "Attendance Today", value: "—", icon: ClipboardCheck, change: "No data yet" },
-  { label: "Fees Collected", value: "UGX 0", icon: CreditCard, change: "This term" },
-  { label: "Outstanding Balance", value: "UGX 0", icon: AlertTriangle, change: "Total owed" },
-];
-
-const quickActions = [
-  { label: "Enroll Student", icon: UserPlus, href: "/students" },
-  { label: "Mark Attendance", icon: ClipboardCheck, href: "/attendance" },
-  { label: "Record Payment", icon: DollarSign, href: "/fees" },
-  { label: "View Reports", icon: TrendingUp, href: "/reports" },
-];
-
 export default function Dashboard() {
   const { settings } = useSchool();
+  const { t } = useLanguage();
+
+  const stats = [
+    { label: t("dashboard.totalStudents"), value: "0", icon: Users, change: t("dashboard.startEnrolling") },
+    { label: t("dashboard.attendanceToday"), value: "—", icon: ClipboardCheck, change: t("common.noDataYet") },
+    { label: t("dashboard.feesCollected"), value: "UGX 0", icon: CreditCard, change: t("dashboard.thisTerm") },
+    { label: t("dashboard.outstandingBalance"), value: "UGX 0", icon: AlertTriangle, change: t("dashboard.totalOwed") },
+  ];
+
+  const quickActions = [
+    { label: t("dashboard.enrollStudent"), icon: UserPlus, href: "/students" },
+    { label: t("dashboard.markAttendance"), icon: ClipboardCheck, href: "/attendance" },
+    { label: t("dashboard.recordPayment"), icon: DollarSign, href: "/fees" },
+    { label: t("dashboard.viewReports"), icon: TrendingUp, href: "/reports" },
+  ];
 
   return (
     <div className="space-y-6">
       <div className="page-header">
         <div>
-          <h1 className="page-title">Dashboard</h1>
+          <h1 className="page-title">{t("dashboard.title")}</h1>
           <p className="page-description">
-            Welcome to {settings.schoolName}. Here's your overview.
+            {t("dashboard.welcome")} {settings.schoolName}. {t("dashboard.overview")}
           </p>
         </div>
       </div>
 
-      {/* Stats Grid */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {stats.map((stat, i) => (
-          <div
-            key={stat.label}
-            className="stat-card animate-fade-in"
-            style={{ animationDelay: `${i * 80}ms` }}
-          >
+          <div key={stat.label} className="stat-card animate-fade-in" style={{ animationDelay: `${i * 80}ms` }}>
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">{stat.label}</p>
@@ -52,16 +49,11 @@ export default function Dashboard() {
         ))}
       </div>
 
-      {/* Quick Actions */}
       <div>
-        <h2 className="mb-3 text-sm font-medium text-muted-foreground uppercase tracking-wide">Quick Actions</h2>
+        <h2 className="mb-3 text-sm font-medium text-muted-foreground uppercase tracking-wide">{t("dashboard.quickActions")}</h2>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {quickActions.map((action) => (
-            <a
-              key={action.label}
-              href={action.href}
-              className="flex items-center gap-3 rounded-xl border bg-card p-4 transition-all hover:shadow-md hover:border-primary/30"
-            >
+            <a key={action.label} href={action.href} className="flex items-center gap-3 rounded-xl border bg-card p-4 transition-all hover:shadow-md hover:border-primary/30">
               <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 text-primary">
                 <action.icon className="h-4 w-4" />
               </div>
@@ -71,19 +63,18 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Recent Activity */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
             <Clock className="h-4 w-4 text-muted-foreground" />
-            Recent Activity
+            {t("dashboard.recentActivity")}
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
             <Clock className="mb-3 h-10 w-10 opacity-30" />
-            <p className="text-sm">No activity yet</p>
-            <p className="text-xs">Start by enrolling students and setting up classes</p>
+            <p className="text-sm">{t("dashboard.noActivity")}</p>
+            <p className="text-xs">{t("dashboard.startByEnrolling")}</p>
           </div>
         </CardContent>
       </Card>
