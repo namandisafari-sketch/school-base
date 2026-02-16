@@ -34,6 +34,8 @@ import Reports from "./pages/Reports";
 import StudentCards from "./pages/StudentCards";
 import SettingsPage from "./pages/Settings";
 import UserManagement from "./pages/UserManagement";
+import AcademicAnalysis from "./pages/AcademicAnalysis";
+import AccessManagement from "./pages/AccessManagement";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -89,9 +91,11 @@ function AppRoutes() {
         <Route path="/assets" element={<Assets />} />
         <Route path="/reports" element={<Reports />} />
         <Route path="/student-cards" element={<StudentCards />} />
+        <Route path="/academic-analysis" element={<AcademicAnalysis />} />
         {/* Admin-only routes */}
         <Route path="/settings" element={isAdmin ? <SettingsPage /> : <Navigate to="/dashboard" replace />} />
         <Route path="/users" element={isAdmin ? <UserManagement /> : <Navigate to="/dashboard" replace />} />
+        <Route path="/access-management" element={isAdmin ? <AccessManagement /> : <Navigate to="/dashboard" replace />} />
       </Route>
       <Route path="*" element={<NotFound />} />
     </Routes>

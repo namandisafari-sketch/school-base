@@ -20,6 +20,8 @@ import {
   Package,
   Award,
   IdCard,
+  TrendingUp,
+  Lock,
   type LucideIcon,
   Shield,
 } from "lucide-react";
@@ -48,6 +50,7 @@ export const navigationItems: NavItem[] = [
   { title: "Exams", url: "/exams", icon: FileText, schoolTypes: ["primary", "secondary"], group: "Academics" },
   { title: "Report Cards", url: "/report-cards", icon: Award, schoolTypes: ["primary", "secondary"], group: "Academics" },
   { title: "ECD Progress", url: "/ecd-progress", icon: Award, schoolTypes: ["kindergarten"], group: "Academics" },
+  { title: "Academic Analysis", url: "/academic-analysis", icon: TrendingUp, schoolTypes: ["primary", "secondary"], group: "Academics" },
   { title: "Timetable", url: "/timetable", icon: Clock, schoolTypes: "all", group: "Academics" },
   // Operations
   { title: "Fees", url: "/fees", icon: CreditCard, schoolTypes: "all", group: "Finance" },
@@ -64,6 +67,7 @@ export const navigationItems: NavItem[] = [
   { title: "Assets", url: "/assets", icon: Package, schoolTypes: "all", group: "Admin" },
   { title: "Reports", url: "/reports", icon: BarChart3, schoolTypes: "all", group: "Admin" },
   { title: "User Management", url: "/users", icon: Shield, schoolTypes: "all", group: "System" },
+  { title: "Access Management", url: "/access-management", icon: Lock, schoolTypes: "all", group: "System" },
   { title: "Settings", url: "/settings", icon: Settings, schoolTypes: "all", group: "System" },
 ];
 

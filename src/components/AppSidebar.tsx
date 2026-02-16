@@ -20,7 +20,7 @@ import { GraduationCap, LogOut, Shield, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
-const adminOnlyUrls = ["/settings", "/users"];
+const adminOnlyUrls = ["/settings", "/users", "/access-management"];
 
 export function AppSidebar() {
   const { settings } = useSchool();
@@ -28,6 +28,13 @@ export function AppSidebar() {
   const { user, logout, isAdmin } = useAuth();
   const groups = getNavGroups(settings.schoolType);
   const isAr = language === "ar";
+
+  // Load page permissions for teachers
+  const pagePermissions: Record<string, boolean> = (() => {
+    if (isAdmin) return {};
+    const saved = localStorage.getItem("page_permissions");
+    return saved ? JSON.parse(saved) : {};
+  })();
 
   return (
     <Sidebar className="border-r-0" side={isRTL ? "right" : "left"}>
@@ -53,7 +60,10 @@ export function AppSidebar() {
           // Filter out admin-only items for non-admin users
           const filteredItems = isAdmin
             ? items
-            : items.filter(item => !adminOnlyUrls.includes(item.url));
+            : items.filter(item =>
+                !adminOnlyUrls.includes(item.url) &&
+                pagePermissions[item.url] !== false
+              );
 
           if (filteredItems.length === 0) return null;
 

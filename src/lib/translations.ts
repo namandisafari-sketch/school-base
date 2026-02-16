@@ -37,6 +37,8 @@ export const translations: Record<Language, Record<string, string>> = {
     "nav.reports": "Reports",
     "nav.settings": "Settings",
     "nav.userManagement": "User Management",
+    "nav.accessManagement": "Access Management",
+    "nav.academicAnalysis": "Academic Analysis",
     // Common
     "common.save": "Save Changes",
     "common.cancel": "Cancel",
@@ -624,6 +626,8 @@ export const translations: Record<Language, Record<string, string>> = {
     "nav.reports": "التقارير",
     "nav.settings": "الإعدادات",
     "nav.userManagement": "إدارة المستخدمين",
+    "nav.accessManagement": "إدارة الصلاحيات",
+    "nav.academicAnalysis": "التحليل الأكاديمي",
     // Common
     "common.save": "حفظ التغييرات",
     "common.cancel": "إلغاء",
@@ -1220,6 +1224,8 @@ export const navTitleKeys: Record<string, string> = {
   "Reports": "nav.reports",
   "Settings": "nav.settings",
   "User Management": "nav.userManagement",
+  "Access Management": "nav.accessManagement",
+  "Academic Analysis": "nav.academicAnalysis",
 };
 
 export const navGroupKeys: Record<string, string> = {
