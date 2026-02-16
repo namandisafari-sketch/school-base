@@ -2,7 +2,7 @@
  * Express Server - School Management System
  * Serves both the API and the React frontend over LAN
  * 
- * After export, install: npm install express cors better-sqlite3
+ * After export, install: npm install express cors better-sqlite3 bcryptjs jsonwebtoken
  * Run: node server/server.js
  */
 
@@ -11,6 +11,7 @@ const cors = require('cors');
 const path = require('path');
 const { initDatabase } = require('./database');
 const routes = require('./routes');
+const { router: authRoutes, authenticate } = require('./routes/auth');
 const os = require('os');
 
 const app = express();
@@ -23,8 +24,11 @@ initDatabase();
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 
-// API routes
-app.use('/api', routes);
+// Auth routes (public)
+app.use('/api/auth', authRoutes);
+
+// Protected API routes
+app.use('/api', authenticate, routes);
 
 // Serve React frontend (after building with: npm run build)
 app.use(express.static(path.join(__dirname, '..', 'dist')));

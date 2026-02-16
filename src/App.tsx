@@ -5,7 +5,9 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { SchoolProvider, useSchool } from "@/contexts/SchoolContext";
 import { LanguageProvider } from "@/contexts/LanguageContext";
+import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { AppLayout } from "@/components/AppLayout";
+import Login from "./pages/Login";
 import Setup from "./pages/Setup";
 import Dashboard from "./pages/Dashboard";
 import Students from "./pages/Students";
@@ -31,13 +33,25 @@ import Assets from "./pages/Assets";
 import Reports from "./pages/Reports";
 import StudentCards from "./pages/StudentCards";
 import SettingsPage from "./pages/Settings";
+import UserManagement from "./pages/UserManagement";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
 function AppRoutes() {
   const { isSetupComplete } = useSchool();
+  const { isAuthenticated, isAdmin } = useAuth();
 
+  // Must log in first
+  if (!isAuthenticated) {
+    return (
+      <Routes>
+        <Route path="*" element={<Login />} />
+      </Routes>
+    );
+  }
+
+  // Then setup if needed
   if (!isSetupComplete) {
     return (
       <Routes>
@@ -49,6 +63,7 @@ function AppRoutes() {
   return (
     <Routes>
       <Route path="/" element={<Navigate to="/dashboard" replace />} />
+      <Route path="/login" element={<Navigate to="/dashboard" replace />} />
       <Route path="/setup" element={<Setup />} />
       <Route element={<AppLayout />}>
         <Route path="/dashboard" element={<Dashboard />} />
@@ -74,7 +89,9 @@ function AppRoutes() {
         <Route path="/assets" element={<Assets />} />
         <Route path="/reports" element={<Reports />} />
         <Route path="/student-cards" element={<StudentCards />} />
-        <Route path="/settings" element={<SettingsPage />} />
+        {/* Admin-only routes */}
+        <Route path="/settings" element={isAdmin ? <SettingsPage /> : <Navigate to="/dashboard" replace />} />
+        <Route path="/users" element={isAdmin ? <UserManagement /> : <Navigate to="/dashboard" replace />} />
       </Route>
       <Route path="*" element={<NotFound />} />
     </Routes>
@@ -85,13 +102,15 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <LanguageProvider>
       <SchoolProvider>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <AppRoutes />
-          </BrowserRouter>
-        </TooltipProvider>
+        <AuthProvider>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+              <AppRoutes />
+            </BrowserRouter>
+          </TooltipProvider>
+        </AuthProvider>
       </SchoolProvider>
     </LanguageProvider>
   </QueryClientProvider>
