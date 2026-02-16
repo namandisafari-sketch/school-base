@@ -49,27 +49,52 @@ export default function ReportCards() {
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;600;700&display=swap');
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Segoe UI', 'Noto Sans Arabic', system-ui, sans-serif; direction: ${isRTL ? "rtl" : "ltr"}; }
-        @media print { body { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }
-        @page { size: A4; margin: 10mm; }
-        .report-card { max-width: 210mm; margin: 0 auto; border: 3px solid #1a7a5a; padding: 0; page-break-after: always; }
-        .report-header { background: linear-gradient(135deg, #1a7a5a11, #1a7a5a05); border-bottom: 2px solid #1a7a5a; padding: 16px 20px; }
+        @media print {
+          body { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; }
+          * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; }
+        }
+        @page { size: A4 portrait; margin: 8mm; }
+        .report-card {
+          max-width: 194mm; margin: 0 auto; border: 3px solid #1a7a5a;
+          padding: 0; page-break-after: always; page-break-inside: avoid;
+        }
+        .report-header {
+          background: linear-gradient(135deg, rgba(26,122,90,0.07), rgba(26,122,90,0.03)) !important;
+          border-bottom: 2px solid #1a7a5a; padding: 16px 20px;
+        }
         .header-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
         .school-name-en { font-size: 14px; font-weight: 700; color: #1a7a5a; }
         .school-name-ar { font-size: 18px; font-weight: 700; color: #1a7a5a; font-family: 'Noto Sans Arabic', sans-serif; direction: rtl; }
         .school-detail { font-size: 9px; color: #555; }
-        .report-title { text-align: center; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #1a7a5a; border: 1px solid #1a7a5a; display: inline-block; padding: 4px 16px; }
-        .student-info { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 24px; padding: 12px 20px; border-bottom: 2px solid #1a7a5a; font-size: 11px; }
+        .logo-circle {
+          width: 56px; height: 56px; border-radius: 50%; border: 2px solid #1a7a5a;
+          background: rgba(26,122,90,0.1); display: flex; align-items: center; justify-content: center;
+          flex-shrink: 0;
+        }
+        .logo-circle svg { width: 28px; height: 28px; color: #1a7a5a; }
+        .report-title-box {
+          text-align: center; font-size: 13px; font-weight: 700; text-transform: uppercase;
+          letter-spacing: 1px; color: #1a7a5a; border: 1px solid #1a7a5a;
+          display: inline-block; padding: 4px 16px;
+        }
+        .student-info {
+          display: grid; grid-template-columns: 1fr 1fr; gap: 6px 24px;
+          padding: 12px 20px; border-bottom: 2px solid #1a7a5a; font-size: 11px;
+        }
         .info-row { display: flex; gap: 6px; align-items: baseline; }
+        .info-row-rtl { display: flex; gap: 6px; align-items: baseline; justify-content: flex-end; direction: rtl; }
         .info-label { font-weight: 600; color: #555; white-space: nowrap; }
-        .info-label-ar { font-weight: 600; color: #555; font-family: 'Noto Sans Arabic', sans-serif; direction: rtl; white-space: nowrap; }
         .info-value { font-weight: 700; border-bottom: 1px dotted #999; flex: 1; min-width: 60px; }
         .marks-section { padding: 12px 20px; }
         table { width: 100%; border-collapse: collapse; font-size: 10px; }
         th, td { border: 1px solid #1a7a5a; padding: 5px 8px; text-align: center; }
-        th { background: #1a7a5a; color: white; font-weight: 700; text-transform: uppercase; font-size: 9px; letter-spacing: 0.5px; }
+        th {
+          background: #1a7a5a !important; color: white !important; font-weight: 700;
+          text-transform: uppercase; font-size: 9px; letter-spacing: 0.5px;
+        }
         .subject-name { text-align: left; font-weight: 600; }
         .subject-name-ar { text-align: right; font-weight: 600; font-family: 'Noto Sans Arabic', sans-serif; }
-        .total-row { background: #e8f5f0; font-weight: 700; }
+        .total-row { background: #e8f5f0 !important; font-weight: 700; }
         .remarks-section { padding: 12px 20px; border-top: 2px solid #1a7a5a; }
         .remark-line { font-size: 10px; margin-bottom: 8px; display: flex; gap: 4px; }
         .remark-label { font-weight: 700; white-space: nowrap; }
@@ -79,6 +104,8 @@ export default function ReportCards() {
         .bilingual { display: flex; justify-content: space-between; }
         .monthly-table { margin-top: 12px; }
         .arabic-subjects-section th { font-family: 'Noto Sans Arabic', sans-serif; }
+        /* Force backgrounds to print */
+        .bg-primary-5 { background: rgba(26,122,90,0.05) !important; }
       </style></head><body>${el.innerHTML}</body></html>`);
     w.document.close();
     w.focus();
