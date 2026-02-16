@@ -28,6 +28,7 @@ import Requisitions from "./pages/Requisitions";
 import TermCalendar from "./pages/TermCalendar";
 import Assets from "./pages/Assets";
 import Reports from "./pages/Reports";
+import StudentCards from "./pages/StudentCards";
 import SettingsPage from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 
@@ -71,6 +72,7 @@ function AppRoutes() {
         <Route path="/calendar" element={<TermCalendar />} />
         <Route path="/assets" element={<Assets />} />
         <Route path="/reports" element={<Reports />} />
+        <Route path="/student-cards" element={<StudentCards />} />
         <Route path="/settings" element={<SettingsPage />} />
       </Route>
       <Route path="*" element={<NotFound />} />
