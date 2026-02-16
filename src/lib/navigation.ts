@@ -19,6 +19,7 @@ import {
   QrCode,
   Package,
   Award,
+  IdCard,
   type LucideIcon,
 } from "lucide-react";
 import { SchoolType } from "@/contexts/SchoolContext";
@@ -39,6 +40,7 @@ export const navigationItems: NavItem[] = [
   { title: "Classes", url: "/classes", icon: GraduationCap, schoolTypes: "all", group: "People" },
   { title: "Parents", url: "/parents", icon: UserCog, schoolTypes: "all", group: "People" },
   { title: "Staff", url: "/staff", icon: UserCog, schoolTypes: "all", group: "People" },
+  { title: "Student Cards", url: "/student-cards", icon: IdCard, schoolTypes: "all", group: "People" },
   // Academics
   { title: "Attendance", url: "/attendance", icon: ClipboardCheck, schoolTypes: "all", group: "Academics" },
   { title: "Subjects", url: "/subjects", icon: BookOpen, schoolTypes: ["primary", "secondary"], group: "Academics" },
