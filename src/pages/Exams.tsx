@@ -7,7 +7,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Plus, FileText, Calendar } from "lucide-react";
+import { Plus, FileText } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface Exam {
   id: string;
@@ -19,6 +20,7 @@ interface Exam {
 }
 
 export default function Exams() {
+  const { t } = useLanguage();
   const [exams, setExams] = useState<Exam[]>(() => {
     const saved = localStorage.getItem("exams");
     return saved ? JSON.parse(saved) : [];
@@ -46,34 +48,34 @@ export default function Exams() {
     <div className="space-y-6">
       <div className="page-header">
         <div>
-          <h1 className="page-title">Exams</h1>
-          <p className="page-description">Manage exams and assessments</p>
+          <h1 className="page-title">{t("exams.title")}</h1>
+          <p className="page-description">{t("exams.description")}</p>
         </div>
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger asChild>
-            <Button size="sm"><Plus className="mr-2 h-4 w-4" /> Create Exam</Button>
+            <Button size="sm"><Plus className="mr-2 h-4 w-4" /> {t("exams.createExam")}</Button>
           </DialogTrigger>
           <DialogContent>
-            <DialogHeader><DialogTitle>Create Exam</DialogTitle></DialogHeader>
+            <DialogHeader><DialogTitle>{t("exams.createExam")}</DialogTitle></DialogHeader>
             <div className="grid gap-4 py-2">
-              <div><Label>Exam Name *</Label><Input className="mt-1.5" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="e.g. Mid-Term Exams" /></div>
+              <div><Label>{t("exams.examName")} *</Label><Input className="mt-1.5" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} /></div>
               <div className="grid grid-cols-2 gap-4">
-                <div><Label>Type *</Label>
+                <div><Label>{t("common.type")} *</Label>
                   <Select value={form.type} onValueChange={(v) => setForm({ ...form, type: v })}>
-                    <SelectTrigger className="mt-1.5"><SelectValue placeholder="Select" /></SelectTrigger>
+                    <SelectTrigger className="mt-1.5"><SelectValue placeholder={t("common.select")} /></SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="midterm">Mid-Term</SelectItem>
-                      <SelectItem value="final">End of Term</SelectItem>
-                      <SelectItem value="mock">Mock</SelectItem>
-                      <SelectItem value="quiz">Quiz/Test</SelectItem>
+                      <SelectItem value="midterm">{t("exams.midterm")}</SelectItem>
+                      <SelectItem value="final">{t("exams.final")}</SelectItem>
+                      <SelectItem value="mock">{t("exams.mock")}</SelectItem>
+                      <SelectItem value="quiz">{t("exams.quiz")}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
-                <div><Label>Term</Label><Input className="mt-1.5" value={form.term} onChange={(e) => setForm({ ...form, term: e.target.value })} placeholder="Term 1" /></div>
+                <div><Label>{t("exams.term")}</Label><Input className="mt-1.5" value={form.term} onChange={(e) => setForm({ ...form, term: e.target.value })} /></div>
               </div>
-              <div><Label>Date</Label><Input type="date" className="mt-1.5" value={form.date} onChange={(e) => setForm({ ...form, date: e.target.value })} /></div>
+              <div><Label>{t("common.date")}</Label><Input type="date" className="mt-1.5" value={form.date} onChange={(e) => setForm({ ...form, date: e.target.value })} /></div>
             </div>
-            <Button onClick={handleAdd} disabled={!form.name || !form.type} className="w-full">Create Exam</Button>
+            <Button onClick={handleAdd} disabled={!form.name || !form.type} className="w-full">{t("exams.createExam")}</Button>
           </DialogContent>
         </Dialog>
       </div>
@@ -81,13 +83,13 @@ export default function Exams() {
       {exams.length === 0 ? (
         <Card><CardContent className="flex flex-col items-center justify-center py-16">
           <FileText className="mb-3 h-12 w-12 text-muted-foreground/30" />
-          <p className="text-sm text-muted-foreground">No exams scheduled yet</p>
+          <p className="text-sm text-muted-foreground">{t("exams.noExams")}</p>
         </CardContent></Card>
       ) : (
         <Card><CardContent className="p-0">
           <Table>
             <TableHeader><TableRow>
-              <TableHead>Exam</TableHead><TableHead>Type</TableHead><TableHead>Term</TableHead><TableHead>Date</TableHead><TableHead>Status</TableHead>
+              <TableHead>{t("exams.examName")}</TableHead><TableHead>{t("common.type")}</TableHead><TableHead>{t("exams.term")}</TableHead><TableHead>{t("common.date")}</TableHead><TableHead>{t("common.status")}</TableHead>
             </TableRow></TableHeader>
             <TableBody>
               {exams.map((e) => (
@@ -96,7 +98,7 @@ export default function Exams() {
                   <TableCell className="capitalize">{e.type}</TableCell>
                   <TableCell>{e.term || "—"}</TableCell>
                   <TableCell>{e.date || "—"}</TableCell>
-                  <TableCell><Badge variant="outline" className={`text-xs ${statusColor(e.status)}`}>{e.status}</Badge></TableCell>
+                  <TableCell><Badge variant="outline" className={`text-xs ${statusColor(e.status)}`}>{t(`exams.${e.status}`)}</Badge></TableCell>
                 </TableRow>
               ))}
             </TableBody>

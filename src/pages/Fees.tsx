@@ -11,9 +11,10 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import {
-  DollarSign, CreditCard, AlertTriangle, Search, Plus, Pencil, Trash2,
+  DollarSign, CreditCard, Search, Plus, Pencil, Trash2,
   ArrowLeftRight, Clock, FileText, Users, TrendingUp, Camera, CheckCircle, ShieldAlert,
 } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 // ─── Types ───
 interface FeeStructure {
@@ -34,6 +35,8 @@ interface BursarRule {
 const fmt = (n: number) => `USh ${n.toLocaleString()}`;
 
 export default function Fees() {
+  const { t } = useLanguage();
+  
   // Shared data
   const [students] = useState(() => {
     const saved = localStorage.getItem("students");
@@ -173,17 +176,17 @@ export default function Fees() {
   const avgPayment = payments.length > 0 ? Math.round(totalCollected / payments.length) : 0;
 
   const balanceStatus = (b: StudentBalance) => {
-    if (b.balance <= 0) return { label: "paid", color: "bg-success/10 text-success border-success/20" };
-    if (b.paid > 0) return { label: "partial", color: "bg-warning/10 text-warning border-warning/20" };
-    return { label: "pending", color: "bg-destructive/10 text-destructive border-destructive/20" };
+    if (b.balance <= 0) return { label: t("fees.paid"), color: "bg-success/10 text-success border-success/20" };
+    if (b.paid > 0) return { label: t("fees.partial"), color: "bg-warning/10 text-warning border-warning/20" };
+    return { label: t("fees.pending"), color: "bg-destructive/10 text-destructive border-destructive/20" };
   };
 
   return (
     <div className="space-y-6">
       <div className="page-header">
         <div>
-          <h1 className="page-title">Fee Management</h1>
-          <p className="page-description">Manage fee structures and student payments</p>
+          <h1 className="page-title">{t("fees.title")}</h1>
+          <p className="page-description">{t("fees.description")}</p>
         </div>
       </div>
 
@@ -192,7 +195,7 @@ export default function Fees() {
         <div className="stat-card">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-muted-foreground">Total Collected</p>
+              <p className="text-sm text-muted-foreground">{t("fees.totalCollected")}</p>
               <p className="mt-1 text-2xl font-bold text-success">{fmt(totalCollected)}</p>
             </div>
             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted text-muted-foreground"><DollarSign className="h-5 w-5" /></div>
@@ -201,7 +204,7 @@ export default function Fees() {
         <div className="stat-card">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-muted-foreground">Outstanding</p>
+              <p className="text-sm text-muted-foreground">{t("fees.outstanding")}</p>
               <p className="mt-1 text-2xl font-bold text-warning">{fmt(Math.max(outstanding, 0))}</p>
             </div>
             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted text-muted-foreground"><CreditCard className="h-5 w-5" /></div>
@@ -210,7 +213,7 @@ export default function Fees() {
         <div className="stat-card">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-muted-foreground">Fee Structures</p>
+              <p className="text-sm text-muted-foreground">{t("fees.feeStructures")}</p>
               <p className="mt-1 text-2xl font-bold">{structures.length}</p>
             </div>
             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted text-muted-foreground"><FileText className="h-5 w-5" /></div>
@@ -221,11 +224,11 @@ export default function Fees() {
       {/* Tabs */}
       <Tabs defaultValue="collect">
         <TabsList>
-          <TabsTrigger value="collect" className="gap-1.5"><ArrowLeftRight className="h-3.5 w-3.5" /> Collect Payment</TabsTrigger>
-          <TabsTrigger value="history" className="gap-1.5"><Clock className="h-3.5 w-3.5" /> History</TabsTrigger>
-          <TabsTrigger value="structures">Fee Structures</TabsTrigger>
-          <TabsTrigger value="balances">Student Balances</TabsTrigger>
-          <TabsTrigger value="rules" className="gap-1.5"><ShieldAlert className="h-3.5 w-3.5" /> Bursar Rules</TabsTrigger>
+          <TabsTrigger value="collect" className="gap-1.5"><ArrowLeftRight className="h-3.5 w-3.5" /> {t("fees.collectPayment")}</TabsTrigger>
+          <TabsTrigger value="history" className="gap-1.5"><Clock className="h-3.5 w-3.5" /> {t("fees.history")}</TabsTrigger>
+          <TabsTrigger value="structures">{t("fees.feeStructures")}</TabsTrigger>
+          <TabsTrigger value="balances">{t("fees.studentBalances")}</TabsTrigger>
+          <TabsTrigger value="rules" className="gap-1.5"><ShieldAlert className="h-3.5 w-3.5" /> {t("fees.bursarRules")}</TabsTrigger>
         </TabsList>
 
         {/* ══════ COLLECT PAYMENT ══════ */}
@@ -233,23 +236,17 @@ export default function Fees() {
           <Card>
             <CardContent className="p-6 space-y-4">
               <div>
-                <h3 className="text-lg font-semibold flex items-center gap-2"><Search className="h-5 w-5" /> Scan Student ID</h3>
-                <p className="text-sm text-muted-foreground">Scan or type admission number to process payment</p>
+                <h3 className="text-lg font-semibold flex items-center gap-2"><Search className="h-5 w-5" /> {t("fees.scanStudent")}</h3>
+                <p className="text-sm text-muted-foreground">{t("fees.scanDesc")}</p>
               </div>
               <div>
-                <Label>Scan or Enter Student Code</Label>
+                <Label>{t("fees.scanOrEnter")}</Label>
                 <div className="flex gap-2 mt-1.5">
-                  <Input
-                    value={scanInput}
-                    onChange={(e) => setScanInput(e.target.value)}
-                    onKeyDown={(e) => e.key === "Enter" && handleScanStudent()}
-                    placeholder="Scan barcode or type ADM/25/0001..."
-                    className="flex-1"
-                  />
+                  <Input value={scanInput} onChange={(e) => setScanInput(e.target.value)} onKeyDown={(e) => e.key === "Enter" && handleScanStudent()} placeholder={t("fees.scanPlaceholder")} className="flex-1" />
                   <Button variant="outline" size="icon"><Camera className="h-4 w-4" /></Button>
                   <Button onClick={handleScanStudent}><Search className="h-4 w-4" /></Button>
                 </div>
-                <p className="text-xs text-muted-foreground mt-1">Click the input field, then scan with your barcode scanner</p>
+                <p className="text-xs text-muted-foreground mt-1">{t("fees.scanHint")}</p>
               </div>
 
               {foundStudent && (
@@ -261,32 +258,32 @@ export default function Fees() {
                         <p className="font-semibold">{foundStudent.fullName}</p>
                         <p className="text-sm text-muted-foreground">{foundStudent.admissionNumber} • {foundStudent.className || "No class"}</p>
                       </div>
-                      <Badge variant="outline" className="bg-success/10 text-success">Found</Badge>
+                      <Badge variant="outline" className="bg-success/10 text-success">{t("fees.found")}</Badge>
                     </div>
                     <div className="grid grid-cols-3 gap-4">
                       <div>
-                        <Label>Amount (USh) *</Label>
-                        <Input className="mt-1.5" type="number" value={collectForm.amount} onChange={(e) => setCollectForm({ ...collectForm, amount: e.target.value })} placeholder="e.g. 500000" />
+                        <Label>{t("common.amount")} (USh) *</Label>
+                        <Input className="mt-1.5" type="number" value={collectForm.amount} onChange={(e) => setCollectForm({ ...collectForm, amount: e.target.value })} />
                       </div>
                       <div>
-                        <Label>Method</Label>
+                        <Label>{t("fees.method")}</Label>
                         <Select value={collectForm.method} onValueChange={(v) => setCollectForm({ ...collectForm, method: v })}>
                           <SelectTrigger className="mt-1.5"><SelectValue /></SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="cash">Cash</SelectItem>
-                            <SelectItem value="mobile_money">Mobile Money</SelectItem>
-                            <SelectItem value="bank">Bank Transfer</SelectItem>
-                            <SelectItem value="cheque">Cheque</SelectItem>
+                            <SelectItem value="cash">{t("fees.cash")}</SelectItem>
+                            <SelectItem value="mobile_money">{t("fees.mobileMoney")}</SelectItem>
+                            <SelectItem value="bank">{t("fees.bankTransfer")}</SelectItem>
+                            <SelectItem value="cheque">{t("fees.cheque")}</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
                       <div>
-                        <Label>Reference</Label>
-                        <Input className="mt-1.5" value={collectForm.reference} onChange={(e) => setCollectForm({ ...collectForm, reference: e.target.value })} placeholder="Transaction ID" />
+                        <Label>{t("fees.reference")}</Label>
+                        <Input className="mt-1.5" value={collectForm.reference} onChange={(e) => setCollectForm({ ...collectForm, reference: e.target.value })} />
                       </div>
                     </div>
                     <Button onClick={handleCollectPayment} disabled={!collectForm.amount} className="w-full">
-                      <DollarSign className="mr-2 h-4 w-4" /> Record Payment
+                      <DollarSign className="mr-2 h-4 w-4" /> {t("fees.recordPayment")}
                     </Button>
                   </div>
                 </>
@@ -299,10 +296,10 @@ export default function Fees() {
         <TabsContent value="history" className="space-y-4 mt-4">
           <div className="grid gap-4 sm:grid-cols-4">
             {[
-              { label: "Total Collected", value: fmt(totalCollected), sub: `${payments.length} payments`, icon: TrendingUp, color: "text-success" },
-              { label: "Today", value: fmt(todayTotal), sub: `${todayPayments.length} payments`, icon: Clock, color: "text-info" },
-              { label: "Students Paid", value: String(uniquePayers), sub: "Unique students", icon: Users, color: "text-primary" },
-              { label: "Avg Payment", value: fmt(avgPayment), sub: "", icon: CreditCard, color: "text-muted-foreground" },
+              { label: t("fees.totalCollected"), value: fmt(totalCollected), sub: `${payments.length} ${t("fees.payments")}`, icon: TrendingUp, color: "text-success" },
+              { label: t("fees.today"), value: fmt(todayTotal), sub: `${todayPayments.length} ${t("fees.payments")}`, icon: Clock, color: "text-info" },
+              { label: t("fees.studentsPaid"), value: String(uniquePayers), sub: t("fees.uniqueStudents"), icon: Users, color: "text-primary" },
+              { label: t("fees.avgPayment"), value: fmt(avgPayment), sub: "", icon: CreditCard, color: "text-muted-foreground" },
             ].map((stat) => (
               <div key={stat.label} className="stat-card">
                 <div className="flex items-center justify-between">
@@ -320,15 +317,15 @@ export default function Fees() {
           <div className="flex items-center gap-3">
             <div className="relative flex-1 max-w-sm">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <Input placeholder="Search by student, admission number, or receipt..." value={paySearch} onChange={(e) => setPaySearch(e.target.value)} className="pl-9" />
+              <Input placeholder={t("fees.searchPayments")} value={paySearch} onChange={(e) => setPaySearch(e.target.value)} className="pl-9" />
             </div>
             <Select value={payMethodFilter} onValueChange={setPayMethodFilter}>
-              <SelectTrigger className="w-36"><SelectValue placeholder="All Methods" /></SelectTrigger>
+              <SelectTrigger className="w-36"><SelectValue placeholder={t("fees.allMethods")} /></SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Methods</SelectItem>
-                <SelectItem value="cash">Cash</SelectItem>
-                <SelectItem value="mobile_money">Mobile Money</SelectItem>
-                <SelectItem value="bank">Bank Transfer</SelectItem>
+                <SelectItem value="all">{t("fees.allMethods")}</SelectItem>
+                <SelectItem value="cash">{t("fees.cash")}</SelectItem>
+                <SelectItem value="mobile_money">{t("fees.mobileMoney")}</SelectItem>
+                <SelectItem value="bank">{t("fees.bankTransfer")}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -336,12 +333,12 @@ export default function Fees() {
           {payments.length === 0 ? (
             <Card><CardContent className="flex flex-col items-center justify-center py-16">
               <Clock className="mb-3 h-12 w-12 text-muted-foreground/30" />
-              <p className="text-sm text-muted-foreground">No payment records yet</p>
+              <p className="text-sm text-muted-foreground">{t("fees.noPayments")}</p>
             </CardContent></Card>
           ) : (
             <Card>
               <CardContent className="p-4">
-                <h3 className="font-semibold flex items-center gap-2 mb-4"><FileText className="h-4 w-4" /> Payment Records <Badge variant="secondary" className="text-xs">{filteredPayments.length}</Badge></h3>
+                <h3 className="font-semibold flex items-center gap-2 mb-4"><FileText className="h-4 w-4" /> {t("fees.paymentRecords")} <Badge variant="secondary" className="text-xs">{filteredPayments.length}</Badge></h3>
                 <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                   {filteredPayments.map((p) => (
                     <div key={p.id} className="rounded-lg border p-3 transition-shadow hover:shadow-md">
@@ -371,21 +368,20 @@ export default function Fees() {
             <CardContent className="p-6 space-y-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="text-lg font-semibold">Fee Structures</h3>
-                  <p className="text-sm text-muted-foreground">Define fee types and amounts by level</p>
+                  <h3 className="text-lg font-semibold">{t("fees.feeStructures")}</h3>
                 </div>
                 <Dialog open={structureDialog} onOpenChange={(o) => { setStructureDialog(o); if (!o) setEditingStructure(null); }}>
                   <DialogTrigger asChild>
                     <Button size="sm" onClick={() => { setSForm({ name: "", level: "All", category: "Tuition", amount: "" }); setEditingStructure(null); }}>
-                      <Plus className="mr-2 h-4 w-4" /> Add Fee
+                      <Plus className="mr-2 h-4 w-4" /> {t("fees.addStructure")}
                     </Button>
                   </DialogTrigger>
                   <DialogContent>
-                    <DialogHeader><DialogTitle>{editingStructure ? "Edit" : "Add"} Fee Structure</DialogTitle></DialogHeader>
+                    <DialogHeader><DialogTitle>{editingStructure ? t("fees.editStructure") : t("fees.addStructure")}</DialogTitle></DialogHeader>
                     <div className="grid gap-4 py-2">
-                      <div><Label>Fee Name *</Label><Input className="mt-1.5" value={sForm.name} onChange={(e) => setSForm({ ...sForm, name: e.target.value })} placeholder="e.g. Tuition Fee" /></div>
+                      <div><Label>{t("fees.feeName")} *</Label><Input className="mt-1.5" value={sForm.name} onChange={(e) => setSForm({ ...sForm, name: e.target.value })} /></div>
                       <div className="grid grid-cols-2 gap-4">
-                        <div><Label>Level</Label>
+                        <div><Label>{t("fees.feeLevel")}</Label>
                           <Select value={sForm.level} onValueChange={(v) => setSForm({ ...sForm, level: v })}>
                             <SelectTrigger className="mt-1.5"><SelectValue /></SelectTrigger>
                             <SelectContent>
@@ -396,7 +392,7 @@ export default function Fees() {
                             </SelectContent>
                           </Select>
                         </div>
-                        <div><Label>Category</Label>
+                        <div><Label>{t("fees.feeCategory")}</Label>
                           <Select value={sForm.category} onValueChange={(v) => setSForm({ ...sForm, category: v })}>
                             <SelectTrigger className="mt-1.5"><SelectValue /></SelectTrigger>
                             <SelectContent>
@@ -409,11 +405,11 @@ export default function Fees() {
                           </Select>
                         </div>
                       </div>
-                      <div><Label>Amount (USh) *</Label><Input className="mt-1.5" type="number" value={sForm.amount} onChange={(e) => setSForm({ ...sForm, amount: e.target.value })} /></div>
+                      <div><Label>{t("common.amount")} (USh) *</Label><Input className="mt-1.5" type="number" value={sForm.amount} onChange={(e) => setSForm({ ...sForm, amount: e.target.value })} /></div>
                     </div>
                     <DialogFooter>
-                      <Button variant="outline" onClick={() => setStructureDialog(false)}>Cancel</Button>
-                      <Button onClick={handleSaveStructure} disabled={!sForm.name || !sForm.amount}>{editingStructure ? "Save Changes" : "Add Fee"}</Button>
+                      <Button variant="outline" onClick={() => setStructureDialog(false)}>{t("common.cancel")}</Button>
+                      <Button onClick={handleSaveStructure} disabled={!sForm.name || !sForm.amount}>{editingStructure ? t("common.save") : t("fees.addStructure")}</Button>
                     </DialogFooter>
                   </DialogContent>
                 </Dialog>
@@ -422,7 +418,7 @@ export default function Fees() {
               {structures.length === 0 ? (
                 <div className="flex flex-col items-center py-12">
                   <FileText className="mb-3 h-10 w-10 text-muted-foreground/30" />
-                  <p className="text-sm text-muted-foreground">No fee structures defined yet</p>
+                  <p className="text-sm text-muted-foreground">{t("fees.noStructures")}</p>
                 </div>
               ) : (
                 <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -455,14 +451,12 @@ export default function Fees() {
           <Card>
             <CardContent className="p-6 space-y-4">
               <div>
-                <h3 className="text-lg font-semibold">Student Balances</h3>
-                <p className="text-sm text-muted-foreground">View and manage student fee balances</p>
+                <h3 className="text-lg font-semibold">{t("fees.studentBalances")}</h3>
               </div>
-
               {balances.length === 0 ? (
                 <div className="flex flex-col items-center py-12">
                   <Users className="mb-3 h-10 w-10 text-muted-foreground/30" />
-                  <p className="text-sm text-muted-foreground">No students enrolled yet</p>
+                  <p className="text-sm text-muted-foreground">{t("fees.noBalances")}</p>
                 </div>
               ) : (
                 <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -478,9 +472,9 @@ export default function Fees() {
                           <Badge variant="outline" className={`text-xs ${status.color}`}>{status.label}</Badge>
                         </div>
                         <div className="mt-3 space-y-1 text-sm">
-                          <div className="flex justify-between"><span className="text-muted-foreground">Total</span><span>{fmt(b.total)}</span></div>
-                          <div className="flex justify-between"><span className="text-muted-foreground">Paid</span><span className="text-success">{fmt(b.paid)}</span></div>
-                          <div className="flex justify-between"><span className="text-muted-foreground">Balance</span><span className={b.balance > 0 ? "text-warning font-medium" : "text-success"}>{fmt(b.balance)}</span></div>
+                          <div className="flex justify-between"><span className="text-muted-foreground">{t("common.total")}</span><span>{fmt(b.total)}</span></div>
+                          <div className="flex justify-between"><span className="text-muted-foreground">{t("fees.paid")}</span><span className="text-success">{fmt(b.paid)}</span></div>
+                          <div className="flex justify-between"><span className="text-muted-foreground">{t("fees.balance")}</span><span className={b.balance > 0 ? "text-warning font-medium" : "text-success"}>{fmt(b.balance)}</span></div>
                         </div>
                       </div>
                     );
@@ -497,34 +491,33 @@ export default function Fees() {
             <CardContent className="p-6 space-y-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="text-lg font-semibold flex items-center gap-2"><ShieldAlert className="h-5 w-5 text-warning" /> Bursar Red List Rules</h3>
-                  <p className="text-sm text-muted-foreground">Define rules to automatically block students at the gate</p>
+                  <h3 className="text-lg font-semibold flex items-center gap-2"><ShieldAlert className="h-5 w-5 text-warning" /> {t("fees.bursarRules")}</h3>
                 </div>
                 <Dialog open={ruleDialog} onOpenChange={setRuleDialog}>
                   <DialogTrigger asChild>
-                    <Button size="sm"><Plus className="mr-2 h-4 w-4" /> Add Rule</Button>
+                    <Button size="sm"><Plus className="mr-2 h-4 w-4" /> {t("fees.addRule")}</Button>
                   </DialogTrigger>
                   <DialogContent>
-                    <DialogHeader><DialogTitle>Add Bursar Rule</DialogTitle></DialogHeader>
+                    <DialogHeader><DialogTitle>{t("fees.addRule")}</DialogTitle></DialogHeader>
                     <div className="grid gap-4 py-2">
-                      <div><Label>Rule Name *</Label><Input className="mt-1.5" value={rForm.name} onChange={(e) => setRForm({ ...rForm, name: e.target.value })} placeholder="e.g. High Fees" /></div>
+                      <div><Label>{t("fees.ruleName")} *</Label><Input className="mt-1.5" value={rForm.name} onChange={(e) => setRForm({ ...rForm, name: e.target.value })} /></div>
                       <div className="grid grid-cols-2 gap-4">
-                        <div><Label>Type</Label>
+                        <div><Label>{t("fees.ruleType")}</Label>
                           <Select value={rForm.type} onValueChange={(v) => setRForm({ ...rForm, type: v })}>
                             <SelectTrigger className="mt-1.5"><SelectValue /></SelectTrigger>
                             <SelectContent>
                               <SelectItem value="balance">Balance Threshold</SelectItem>
-                              <SelectItem value="percentage">Percentage Unpaid</SelectItem>
+                              <SelectItem value="percentage">Percentage</SelectItem>
                             </SelectContent>
                           </Select>
                         </div>
-                        <div><Label>Class (optional)</Label><Input className="mt-1.5" value={rForm.className} onChange={(e) => setRForm({ ...rForm, className: e.target.value })} placeholder="e.g. Senior 1A" /></div>
+                        <div><Label>{t("common.class")}</Label><Input className="mt-1.5" value={rForm.className} onChange={(e) => setRForm({ ...rForm, className: e.target.value })} /></div>
                       </div>
-                      <div><Label>Condition *</Label><Input className="mt-1.5" value={rForm.condition} onChange={(e) => setRForm({ ...rForm, condition: e.target.value })} placeholder="e.g. Balance >= USh 50,000" /></div>
+                      <div><Label>{t("fees.condition")} *</Label><Input className="mt-1.5" value={rForm.condition} onChange={(e) => setRForm({ ...rForm, condition: e.target.value })} /></div>
                     </div>
                     <DialogFooter>
-                      <Button variant="outline" onClick={() => setRuleDialog(false)}>Cancel</Button>
-                      <Button onClick={handleSaveRule} disabled={!rForm.name || !rForm.condition}>Add Rule</Button>
+                      <Button variant="outline" onClick={() => setRuleDialog(false)}>{t("common.cancel")}</Button>
+                      <Button onClick={handleSaveRule} disabled={!rForm.name || !rForm.condition}>{t("fees.addRule")}</Button>
                     </DialogFooter>
                   </DialogContent>
                 </Dialog>
@@ -533,18 +526,18 @@ export default function Fees() {
               {rules.length === 0 ? (
                 <div className="flex flex-col items-center py-12">
                   <ShieldAlert className="mb-3 h-10 w-10 text-muted-foreground/30" />
-                  <p className="text-sm text-muted-foreground">No bursar rules defined yet</p>
+                  <p className="text-sm text-muted-foreground">{t("fees.noRules")}</p>
                 </div>
               ) : (
                 <Table>
                   <TableHeader><TableRow>
-                    <TableHead>Rule</TableHead><TableHead>Type</TableHead><TableHead>Condition</TableHead><TableHead>Class</TableHead><TableHead>Status</TableHead><TableHead>Actions</TableHead>
+                    <TableHead>{t("fees.ruleName")}</TableHead><TableHead>{t("common.type")}</TableHead><TableHead>{t("fees.condition")}</TableHead><TableHead>{t("common.class")}</TableHead><TableHead>{t("common.status")}</TableHead><TableHead>{t("common.actions")}</TableHead>
                   </TableRow></TableHeader>
                   <TableBody>
                     {rules.map((r) => (
                       <TableRow key={r.id}>
                         <TableCell className="font-medium">{r.name}</TableCell>
-                        <TableCell><Badge variant="outline" className="text-xs capitalize bg-warning/10 text-warning">{r.type === "balance" ? "Balance Threshold" : "Percentage"}</Badge></TableCell>
+                        <TableCell><Badge variant="outline" className="text-xs capitalize bg-warning/10 text-warning">{r.type}</Badge></TableCell>
                         <TableCell>{r.condition}</TableCell>
                         <TableCell>{r.className || "All"}</TableCell>
                         <TableCell><Switch checked={r.isActive} onCheckedChange={() => toggleRule(r.id)} /></TableCell>
@@ -565,7 +558,6 @@ export default function Fees() {
           <Card>
             <CardContent className="p-6">
               <h3 className="text-lg font-semibold flex items-center gap-2 mb-2"><ShieldAlert className="h-5 w-5 text-warning" /> Override Requests</h3>
-              <p className="text-sm text-muted-foreground mb-4">Students blocked by bursar rules requesting entry</p>
               <div className="flex flex-col items-center py-8">
                 <CheckCircle className="mb-3 h-10 w-10 text-muted-foreground/30" />
                 <p className="text-sm text-muted-foreground">No pending override requests</p>

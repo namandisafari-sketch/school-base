@@ -7,6 +7,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Plus, GraduationCap, Users } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface SchoolClass {
   id: string;
@@ -18,6 +19,7 @@ interface SchoolClass {
 }
 
 export default function Classes() {
+  const { t } = useLanguage();
   const [classes, setClasses] = useState<SchoolClass[]>(() => {
     const saved = localStorage.getItem("classes");
     return saved ? JSON.parse(saved) : [];
@@ -46,34 +48,22 @@ export default function Classes() {
     <div className="space-y-6">
       <div className="page-header">
         <div>
-          <h1 className="page-title">Classes</h1>
-          <p className="page-description">{classes.length} classes configured</p>
+          <h1 className="page-title">{t("classes.title")}</h1>
+          <p className="page-description">{classes.length} {t("classes.configured")}</p>
         </div>
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger asChild>
-            <Button size="sm"><Plus className="mr-2 h-4 w-4" /> Add Class</Button>
+            <Button size="sm"><Plus className="mr-2 h-4 w-4" /> {t("classes.addClass")}</Button>
           </DialogTrigger>
           <DialogContent>
-            <DialogHeader><DialogTitle>Create Class</DialogTitle></DialogHeader>
+            <DialogHeader><DialogTitle>{t("classes.createClass")}</DialogTitle></DialogHeader>
             <div className="grid gap-4 py-2">
-              <div>
-                <Label>Class Name *</Label>
-                <Input className="mt-1.5" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="e.g. P1, S2, Baby Class" />
-              </div>
-              <div>
-                <Label>Level</Label>
-                <Input className="mt-1.5" value={form.level} onChange={(e) => setForm({ ...form, level: e.target.value })} placeholder="e.g. Lower Primary" />
-              </div>
-              <div>
-                <Label>Class Teacher</Label>
-                <Input className="mt-1.5" value={form.classTeacher} onChange={(e) => setForm({ ...form, classTeacher: e.target.value })} placeholder="Teacher name" />
-              </div>
-              <div>
-                <Label>Capacity</Label>
-                <Input className="mt-1.5" type="number" value={form.capacity} onChange={(e) => setForm({ ...form, capacity: e.target.value })} placeholder="40" />
-              </div>
+              <div><Label>{t("classes.className")} *</Label><Input className="mt-1.5" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} /></div>
+              <div><Label>{t("classes.level")}</Label><Input className="mt-1.5" value={form.level} onChange={(e) => setForm({ ...form, level: e.target.value })} /></div>
+              <div><Label>{t("classes.classTeacher")}</Label><Input className="mt-1.5" value={form.classTeacher} onChange={(e) => setForm({ ...form, classTeacher: e.target.value })} /></div>
+              <div><Label>{t("classes.capacity")}</Label><Input className="mt-1.5" type="number" value={form.capacity} onChange={(e) => setForm({ ...form, capacity: e.target.value })} placeholder="40" /></div>
             </div>
-            <Button onClick={handleAdd} disabled={!form.name} className="w-full">Create Class</Button>
+            <Button onClick={handleAdd} disabled={!form.name} className="w-full">{t("classes.createClass")}</Button>
           </DialogContent>
         </Dialog>
       </div>
@@ -82,8 +72,8 @@ export default function Classes() {
         <Card>
           <CardContent className="flex flex-col items-center justify-center py-16">
             <GraduationCap className="mb-3 h-12 w-12 text-muted-foreground/30" />
-            <p className="text-sm text-muted-foreground">No classes created yet</p>
-            <p className="text-xs text-muted-foreground">Create your first class to start organizing students</p>
+            <p className="text-sm text-muted-foreground">{t("classes.noClasses")}</p>
+            <p className="text-xs text-muted-foreground">{t("classes.createFirst")}</p>
           </CardContent>
         </Card>
       ) : (

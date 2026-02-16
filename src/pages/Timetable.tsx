@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Plus, Clock } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
 const defaultPeriods = ["8:00-8:40", "8:40-9:20", "9:20-10:00", "10:30-11:10", "11:10-11:50", "11:50-12:30", "14:00-14:40", "14:40-15:20"];
@@ -20,6 +21,7 @@ interface TimetableEntry {
 }
 
 export default function Timetable() {
+  const { t } = useLanguage();
   const [classes] = useState(() => {
     const saved = localStorage.getItem("classes");
     return saved ? JSON.parse(saved) : [];
@@ -49,42 +51,42 @@ export default function Timetable() {
     <div className="space-y-6">
       <div className="page-header">
         <div>
-          <h1 className="page-title">Timetable</h1>
-          <p className="page-description">Class schedules and period management</p>
+          <h1 className="page-title">{t("timetable.title")}</h1>
+          <p className="page-description">{t("timetable.description")}</p>
         </div>
         {selectedClass && (
           <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
             <DialogTrigger asChild>
-              <Button size="sm"><Plus className="mr-2 h-4 w-4" /> Add Period</Button>
+              <Button size="sm"><Plus className="mr-2 h-4 w-4" /> {t("timetable.addPeriod")}</Button>
             </DialogTrigger>
             <DialogContent>
-              <DialogHeader><DialogTitle>Add Timetable Entry</DialogTitle></DialogHeader>
+              <DialogHeader><DialogTitle>{t("timetable.addEntry")}</DialogTitle></DialogHeader>
               <div className="grid gap-4 py-2">
                 <div className="grid grid-cols-2 gap-4">
-                  <div><Label>Day *</Label>
+                  <div><Label>{t("timetable.day")} *</Label>
                     <Select value={form.day} onValueChange={(v) => setForm({ ...form, day: v })}>
-                      <SelectTrigger className="mt-1.5"><SelectValue placeholder="Select" /></SelectTrigger>
+                      <SelectTrigger className="mt-1.5"><SelectValue placeholder={t("common.select")} /></SelectTrigger>
                       <SelectContent>{days.map((d) => <SelectItem key={d} value={d}>{d}</SelectItem>)}</SelectContent>
                     </Select>
                   </div>
-                  <div><Label>Period *</Label>
+                  <div><Label>{t("timetable.period")} *</Label>
                     <Select value={form.period} onValueChange={(v) => setForm({ ...form, period: v })}>
-                      <SelectTrigger className="mt-1.5"><SelectValue placeholder="Select" /></SelectTrigger>
+                      <SelectTrigger className="mt-1.5"><SelectValue placeholder={t("common.select")} /></SelectTrigger>
                       <SelectContent>{defaultPeriods.map((p) => <SelectItem key={p} value={p}>{p}</SelectItem>)}</SelectContent>
                     </Select>
                   </div>
                 </div>
-                <div><Label>Subject *</Label><Input className="mt-1.5" value={form.subject} onChange={(e) => setForm({ ...form, subject: e.target.value })} /></div>
-                <div><Label>Teacher</Label><Input className="mt-1.5" value={form.teacher} onChange={(e) => setForm({ ...form, teacher: e.target.value })} /></div>
+                <div><Label>{t("timetable.subject")} *</Label><Input className="mt-1.5" value={form.subject} onChange={(e) => setForm({ ...form, subject: e.target.value })} /></div>
+                <div><Label>{t("timetable.teacher")}</Label><Input className="mt-1.5" value={form.teacher} onChange={(e) => setForm({ ...form, teacher: e.target.value })} /></div>
               </div>
-              <Button onClick={handleAdd} disabled={!form.day || !form.period || !form.subject} className="w-full">Add Entry</Button>
+              <Button onClick={handleAdd} disabled={!form.day || !form.period || !form.subject} className="w-full">{t("common.add")}</Button>
             </DialogContent>
           </Dialog>
         )}
       </div>
 
       <Select value={selectedClass} onValueChange={setSelectedClass}>
-        <SelectTrigger className="w-48"><SelectValue placeholder="Select class" /></SelectTrigger>
+        <SelectTrigger className="w-48"><SelectValue placeholder={t("common.selectClass")} /></SelectTrigger>
         <SelectContent>
           {classes.map((c: any) => <SelectItem key={c.id} value={c.name}>{c.name}</SelectItem>)}
         </SelectContent>
@@ -93,7 +95,7 @@ export default function Timetable() {
       {!selectedClass ? (
         <Card><CardContent className="flex flex-col items-center justify-center py-16">
           <Clock className="mb-3 h-12 w-12 text-muted-foreground/30" />
-          <p className="text-sm text-muted-foreground">Select a class to view its timetable</p>
+          <p className="text-sm text-muted-foreground">{t("timetable.selectClass")}</p>
         </CardContent></Card>
       ) : (
         <Card>
@@ -101,7 +103,7 @@ export default function Timetable() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b">
-                  <th className="p-3 text-left text-muted-foreground font-medium">Time</th>
+                  <th className="p-3 text-left text-muted-foreground font-medium">{t("timetable.time")}</th>
                   {days.map((d) => <th key={d} className="p-3 text-left text-muted-foreground font-medium">{d}</th>)}
                 </tr>
               </thead>

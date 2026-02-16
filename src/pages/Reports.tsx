@@ -1,57 +1,60 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { BarChart3, Users, CreditCard, ClipboardCheck, Download, FileText, TrendingUp, DollarSign } from "lucide-react";
-
-const reportCategories = [
-  {
-    title: "Student Reports",
-    icon: Users,
-    reports: [
-      { name: "Enrollment Summary", description: "Total students by class, gender, and status" },
-      { name: "Student Register", description: "Complete list of all enrolled students" },
-      { name: "New Admissions", description: "Students enrolled this term" },
-      { name: "Withdrawn Students", description: "Students who left the school" },
-    ],
-  },
-  {
-    title: "Financial Reports",
-    icon: CreditCard,
-    reports: [
-      { name: "Fees Collection", description: "Payments received this term/month" },
-      { name: "Outstanding Balances", description: "Students with pending fee balances" },
-      { name: "Revenue Summary", description: "Total income by category" },
-      { name: "Expense Report", description: "Expenditure breakdown by category" },
-    ],
-  },
-  {
-    title: "Attendance Reports",
-    icon: ClipboardCheck,
-    reports: [
-      { name: "Daily Attendance", description: "Attendance summary for today" },
-      { name: "Monthly Summary", description: "Attendance trends by class" },
-      { name: "Absentee List", description: "Chronically absent students" },
-      { name: "Attendance Rate", description: "Overall attendance percentage" },
-    ],
-  },
-  {
-    title: "Academic Reports",
-    icon: TrendingUp,
-    reports: [
-      { name: "Exam Results", description: "Performance summary by class/subject" },
-      { name: "Class Rankings", description: "Student positions within each class" },
-      { name: "Subject Analysis", description: "Pass/fail rates per subject" },
-      { name: "Progress Tracking", description: "Student improvement over terms" },
-    ],
-  },
-];
+import { Users, CreditCard, ClipboardCheck, Download, TrendingUp } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function Reports() {
+  const { t } = useLanguage();
+
+  const reportCategories = [
+    {
+      title: t("reports.studentReports"),
+      icon: Users,
+      reports: [
+        { name: t("reports.enrollmentSummary"), description: t("reports.enrollmentDesc") },
+        { name: t("reports.studentRegister"), description: t("reports.registerDesc") },
+        { name: t("reports.newAdmissions"), description: t("reports.admissionsDesc") },
+        { name: t("reports.withdrawnStudents"), description: t("reports.withdrawnDesc") },
+      ],
+    },
+    {
+      title: t("reports.financialReports"),
+      icon: CreditCard,
+      reports: [
+        { name: t("reports.feesCollection"), description: t("reports.feesDesc") },
+        { name: t("reports.outstandingBalances"), description: t("reports.outstandingDesc") },
+        { name: t("reports.revenueSummary"), description: t("reports.revenueDesc") },
+        { name: t("reports.expenseReport"), description: t("reports.expenseDesc") },
+      ],
+    },
+    {
+      title: t("reports.attendanceReports"),
+      icon: ClipboardCheck,
+      reports: [
+        { name: t("reports.dailyAttendance"), description: t("reports.dailyDesc") },
+        { name: t("reports.monthlySummary"), description: t("reports.monthlyDesc") },
+        { name: t("reports.absenteeList"), description: t("reports.absenteeDesc") },
+        { name: t("reports.attendanceRate"), description: t("reports.rateDesc") },
+      ],
+    },
+    {
+      title: t("reports.academicReports"),
+      icon: TrendingUp,
+      reports: [
+        { name: t("reports.examResults"), description: t("reports.examDesc") },
+        { name: t("reports.classRankings"), description: t("reports.rankingsDesc") },
+        { name: t("reports.subjectAnalysis"), description: t("reports.analysisDesc") },
+        { name: t("reports.progressTracking"), description: t("reports.progressDesc") },
+      ],
+    },
+  ];
+
   return (
     <div className="space-y-6">
       <div className="page-header">
         <div>
-          <h1 className="page-title">Reports</h1>
-          <p className="page-description">Financial, academic, and operational reports</p>
+          <h1 className="page-title">{t("reports.title")}</h1>
+          <p className="page-description">{t("reports.description")}</p>
         </div>
       </div>
 

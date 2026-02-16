@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Plus, Search, ClipboardList, Check, X } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface Requisition {
   id: string;
@@ -20,6 +21,7 @@ interface Requisition {
 }
 
 export default function Requisitions() {
+  const { t } = useLanguage();
   const [requisitions, setRequisitions] = useState<Requisition[]>(() => {
     const saved = localStorage.getItem("requisitions");
     return saved ? JSON.parse(saved) : [];
@@ -64,43 +66,43 @@ export default function Requisitions() {
     <div className="space-y-6">
       <div className="page-header">
         <div>
-          <h1 className="page-title">Requisitions</h1>
-          <p className="page-description">Supply requests and approvals</p>
+          <h1 className="page-title">{t("requisitions.title")}</h1>
+          <p className="page-description">{t("requisitions.description")}</p>
         </div>
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger asChild>
-            <Button size="sm"><Plus className="mr-2 h-4 w-4" /> New Requisition</Button>
+            <Button size="sm"><Plus className="mr-2 h-4 w-4" /> {t("requisitions.new")}</Button>
           </DialogTrigger>
           <DialogContent>
-            <DialogHeader><DialogTitle>Submit Requisition</DialogTitle></DialogHeader>
+            <DialogHeader><DialogTitle>{t("requisitions.submit")}</DialogTitle></DialogHeader>
             <div className="grid gap-4 py-2">
-              <div><Label>Title *</Label><Input className="mt-1.5" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder="e.g. Chalk and Markers" /></div>
+              <div><Label>{t("common.name")} *</Label><Input className="mt-1.5" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} /></div>
               <div className="grid grid-cols-2 gap-4">
-                <div><Label>Requested By *</Label><Input className="mt-1.5" value={form.requestedBy} onChange={(e) => setForm({ ...form, requestedBy: e.target.value })} /></div>
-                <div><Label>Amount (UGX)</Label><Input className="mt-1.5" type="number" value={form.amount} onChange={(e) => setForm({ ...form, amount: e.target.value })} /></div>
+                <div><Label>{t("requisitions.requestedBy")} *</Label><Input className="mt-1.5" value={form.requestedBy} onChange={(e) => setForm({ ...form, requestedBy: e.target.value })} /></div>
+                <div><Label>{t("common.amount")} (UGX)</Label><Input className="mt-1.5" type="number" value={form.amount} onChange={(e) => setForm({ ...form, amount: e.target.value })} /></div>
               </div>
-              <div><Label>Description</Label><Textarea className="mt-1.5" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} /></div>
+              <div><Label>{t("common.description")}</Label><Textarea className="mt-1.5" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} /></div>
             </div>
-            <Button onClick={handleAdd} disabled={!form.title || !form.requestedBy} className="w-full">Submit Requisition</Button>
+            <Button onClick={handleAdd} disabled={!form.title || !form.requestedBy} className="w-full">{t("requisitions.submit")}</Button>
           </DialogContent>
         </Dialog>
       </div>
 
       <div className="relative max-w-sm">
         <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-        <Input placeholder="Search requisitions..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
+        <Input placeholder={t("requisitions.searchPlaceholder")} value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
       </div>
 
       {requisitions.length === 0 ? (
         <Card><CardContent className="flex flex-col items-center justify-center py-16">
           <ClipboardList className="mb-3 h-12 w-12 text-muted-foreground/30" />
-          <p className="text-sm text-muted-foreground">No requisitions submitted yet</p>
+          <p className="text-sm text-muted-foreground">{t("requisitions.noRequisitions")}</p>
         </CardContent></Card>
       ) : (
         <Card><CardContent className="p-0">
           <Table>
             <TableHeader><TableRow>
-              <TableHead>Title</TableHead><TableHead>Requested By</TableHead><TableHead>Amount</TableHead><TableHead>Date</TableHead><TableHead>Status</TableHead><TableHead></TableHead>
+              <TableHead>{t("common.name")}</TableHead><TableHead>{t("requisitions.requestedBy")}</TableHead><TableHead>{t("common.amount")}</TableHead><TableHead>{t("common.date")}</TableHead><TableHead>{t("common.status")}</TableHead><TableHead></TableHead>
             </TableRow></TableHeader>
             <TableBody>
               {filtered.map((r) => (
@@ -109,7 +111,7 @@ export default function Requisitions() {
                   <TableCell>{r.requestedBy}</TableCell>
                   <TableCell>UGX {r.amount.toLocaleString()}</TableCell>
                   <TableCell>{r.date}</TableCell>
-                  <TableCell><Badge variant="outline" className={`text-xs ${statusColor(r.status)}`}>{r.status}</Badge></TableCell>
+                  <TableCell><Badge variant="outline" className={`text-xs ${statusColor(r.status)}`}>{t(`requisitions.${r.status}`) || r.status}</Badge></TableCell>
                   <TableCell>
                     {r.status === "pending" && (
                       <div className="flex gap-1">

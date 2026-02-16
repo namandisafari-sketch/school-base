@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { DoorOpen, QrCode, Search, Clock, UserCheck, AlertTriangle } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface CheckIn {
   id: string;
@@ -16,14 +17,16 @@ interface CheckIn {
   method: "manual" | "qr";
 }
 
-const gateStats = [
-  { label: "Arrivals Today", value: "0", icon: UserCheck, color: "text-success" },
-  { label: "Late Arrivals", value: "0", icon: AlertTriangle, color: "text-warning" },
-  { label: "Departures", value: "0", icon: DoorOpen, color: "text-info" },
-  { label: "Still In School", value: "0", icon: Clock, color: "text-primary" },
-];
-
 export default function Gate() {
+  const { t } = useLanguage();
+
+  const gateStats = [
+    { label: t("gate.arrivalsToday"), value: "0", icon: UserCheck, color: "text-success" },
+    { label: t("gate.lateArrivals"), value: "0", icon: AlertTriangle, color: "text-warning" },
+    { label: t("gate.departures"), value: "0", icon: DoorOpen, color: "text-info" },
+    { label: t("gate.stillInSchool"), value: "0", icon: Clock, color: "text-primary" },
+  ];
+
   const [checkins, setCheckins] = useState<CheckIn[]>(() => {
     const saved = localStorage.getItem("gate_checkins");
     return saved ? JSON.parse(saved) : [];
@@ -32,8 +35,7 @@ export default function Gate() {
   const [manualAdm, setManualAdm] = useState("");
 
   const filtered = checkins.filter((c) =>
-    c.studentName.toLowerCase().includes(search.toLowerCase()) ||
-    c.admissionNumber.includes(search)
+    c.studentName.toLowerCase().includes(search.toLowerCase()) || c.admissionNumber.includes(search)
   );
 
   const handleManualCheckin = () => {
@@ -61,8 +63,8 @@ export default function Gate() {
     <div className="space-y-6">
       <div className="page-header">
         <div>
-          <h1 className="page-title">Gate Check-in</h1>
-          <p className="page-description">QR scanning and arrival/departure tracking</p>
+          <h1 className="page-title">{t("gate.title")}</h1>
+          <p className="page-description">{t("gate.description")}</p>
         </div>
       </div>
 
@@ -84,42 +86,42 @@ export default function Gate() {
 
       <div className="grid gap-4 lg:grid-cols-2">
         <Card>
-          <CardHeader><CardTitle className="text-base flex items-center gap-2"><QrCode className="h-4 w-4" /> QR Scanner</CardTitle></CardHeader>
+          <CardHeader><CardTitle className="text-base flex items-center gap-2"><QrCode className="h-4 w-4" /> {t("gate.qrScanner")}</CardTitle></CardHeader>
           <CardContent className="flex flex-col items-center py-8">
             <div className="h-48 w-48 rounded-xl border-2 border-dashed border-muted-foreground/30 flex items-center justify-center mb-4">
               <QrCode className="h-16 w-16 text-muted-foreground/30" />
             </div>
-            <p className="text-sm text-muted-foreground">Camera-based QR scanning available in Electron</p>
+            <p className="text-sm text-muted-foreground">{t("gate.cameraNote")}</p>
           </CardContent>
         </Card>
 
         <Card>
-          <CardHeader><CardTitle className="text-base flex items-center gap-2"><UserCheck className="h-4 w-4" /> Manual Check-in</CardTitle></CardHeader>
+          <CardHeader><CardTitle className="text-base flex items-center gap-2"><UserCheck className="h-4 w-4" /> {t("gate.manualCheckin")}</CardTitle></CardHeader>
           <CardContent className="space-y-4">
             <div className="flex gap-2">
-              <Input placeholder="Enter admission number..." value={manualAdm} onChange={(e) => setManualAdm(e.target.value)} />
-              <Button onClick={handleManualCheckin}>Check In</Button>
+              <Input placeholder={t("gate.enterAdm")} value={manualAdm} onChange={(e) => setManualAdm(e.target.value)} />
+              <Button onClick={handleManualCheckin}>{t("gate.checkIn")}</Button>
             </div>
-            <p className="text-xs text-muted-foreground">Enter a student's admission number to manually check them in</p>
+            <p className="text-xs text-muted-foreground">{t("gate.manualNote")}</p>
           </CardContent>
         </Card>
       </div>
 
       <div className="relative max-w-sm">
         <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-        <Input placeholder="Search check-ins..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
+        <Input placeholder={t("gate.searchCheckins")} value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
       </div>
 
       {checkins.length === 0 ? (
         <Card><CardContent className="flex flex-col items-center justify-center py-16">
           <DoorOpen className="mb-3 h-12 w-12 text-muted-foreground/30" />
-          <p className="text-sm text-muted-foreground">No check-ins recorded today</p>
+          <p className="text-sm text-muted-foreground">{t("gate.noCheckins")}</p>
         </CardContent></Card>
       ) : (
         <Card><CardContent className="p-0">
           <Table>
             <TableHeader><TableRow>
-              <TableHead>Student</TableHead><TableHead>Adm No.</TableHead><TableHead>Type</TableHead><TableHead>Time</TableHead><TableHead>Method</TableHead><TableHead>Status</TableHead>
+              <TableHead>{t("gate.student")}</TableHead><TableHead>{t("students.admNo")}</TableHead><TableHead>{t("common.type")}</TableHead><TableHead>{t("gate.time")}</TableHead><TableHead>{t("fees.method")}</TableHead><TableHead>{t("common.status")}</TableHead>
             </TableRow></TableHeader>
             <TableBody>
               {filtered.map((c) => (
@@ -129,7 +131,7 @@ export default function Gate() {
                   <TableCell className="capitalize">{c.type}</TableCell>
                   <TableCell>{c.time}</TableCell>
                   <TableCell className="uppercase text-xs">{c.method}</TableCell>
-                  <TableCell>{c.isLate ? <Badge variant="outline" className="text-xs bg-warning/10 text-warning">Late</Badge> : <Badge variant="outline" className="text-xs bg-success/10 text-success">On Time</Badge>}</TableCell>
+                  <TableCell>{c.isLate ? <Badge variant="outline" className="text-xs bg-warning/10 text-warning">{t("attendance.late")}</Badge> : <Badge variant="outline" className="text-xs bg-success/10 text-success">{t("gate.onTime")}</Badge>}</TableCell>
                 </TableRow>
               ))}
             </TableBody>

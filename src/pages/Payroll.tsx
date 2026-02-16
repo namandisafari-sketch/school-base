@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Wallet, DollarSign, Users, TrendingUp, Plus } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface PayrollRecord {
   id: string;
@@ -19,14 +20,16 @@ interface PayrollRecord {
   status: "pending" | "paid";
 }
 
-const payrollStats = [
-  { label: "Total Payroll", value: "UGX 0", icon: Wallet, color: "text-primary" },
-  { label: "Staff Count", value: "0", icon: Users, color: "text-info" },
-  { label: "Deductions", value: "UGX 0", icon: DollarSign, color: "text-warning" },
-  { label: "Net Disbursed", value: "UGX 0", icon: TrendingUp, color: "text-success" },
-];
-
 export default function Payroll() {
+  const { t } = useLanguage();
+
+  const payrollStats = [
+    { label: t("payroll.totalPayroll"), value: "UGX 0", icon: Wallet, color: "text-primary" },
+    { label: t("payroll.staffCount"), value: "0", icon: Users, color: "text-info" },
+    { label: t("payroll.deductions"), value: "UGX 0", icon: DollarSign, color: "text-warning" },
+    { label: t("payroll.netDisbursed"), value: "UGX 0", icon: TrendingUp, color: "text-success" },
+  ];
+
   const [records, setRecords] = useState<PayrollRecord[]>(() => {
     const saved = localStorage.getItem("payroll");
     return saved ? JSON.parse(saved) : [];
@@ -59,27 +62,27 @@ export default function Payroll() {
     <div className="space-y-6">
       <div className="page-header">
         <div>
-          <h1 className="page-title">Payroll</h1>
-          <p className="page-description">Salary and payroll processing</p>
+          <h1 className="page-title">{t("payroll.title")}</h1>
+          <p className="page-description">{t("payroll.description")}</p>
         </div>
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger asChild>
-            <Button size="sm"><Plus className="mr-2 h-4 w-4" /> Add Record</Button>
+            <Button size="sm"><Plus className="mr-2 h-4 w-4" /> {t("payroll.addRecord")}</Button>
           </DialogTrigger>
           <DialogContent>
-            <DialogHeader><DialogTitle>Add Payroll Record</DialogTitle></DialogHeader>
+            <DialogHeader><DialogTitle>{t("payroll.addTitle")}</DialogTitle></DialogHeader>
             <div className="grid gap-4 py-2">
               <div className="grid grid-cols-2 gap-4">
-                <div><Label>Employee Name *</Label><Input className="mt-1.5" value={form.employeeName} onChange={(e) => setForm({ ...form, employeeName: e.target.value })} /></div>
-                <div><Label>Role</Label><Input className="mt-1.5" value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value })} /></div>
+                <div><Label>{t("payroll.employeeName")} *</Label><Input className="mt-1.5" value={form.employeeName} onChange={(e) => setForm({ ...form, employeeName: e.target.value })} /></div>
+                <div><Label>{t("staff.role")}</Label><Input className="mt-1.5" value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value })} /></div>
               </div>
               <div className="grid grid-cols-2 gap-4">
-                <div><Label>Basic Salary *</Label><Input className="mt-1.5" type="number" value={form.basicSalary} onChange={(e) => setForm({ ...form, basicSalary: e.target.value })} /></div>
-                <div><Label>Deductions</Label><Input className="mt-1.5" type="number" value={form.deductions} onChange={(e) => setForm({ ...form, deductions: e.target.value })} /></div>
+                <div><Label>{t("payroll.basicSalary")} *</Label><Input className="mt-1.5" type="number" value={form.basicSalary} onChange={(e) => setForm({ ...form, basicSalary: e.target.value })} /></div>
+                <div><Label>{t("payroll.deductions")}</Label><Input className="mt-1.5" type="number" value={form.deductions} onChange={(e) => setForm({ ...form, deductions: e.target.value })} /></div>
               </div>
-              <div><Label>Month</Label><Input className="mt-1.5" type="month" value={form.month} onChange={(e) => setForm({ ...form, month: e.target.value })} /></div>
+              <div><Label>{t("payroll.month")}</Label><Input className="mt-1.5" type="month" value={form.month} onChange={(e) => setForm({ ...form, month: e.target.value })} /></div>
             </div>
-            <Button onClick={handleAdd} disabled={!form.employeeName || !form.basicSalary} className="w-full">Add Record</Button>
+            <Button onClick={handleAdd} disabled={!form.employeeName || !form.basicSalary} className="w-full">{t("payroll.addRecord")}</Button>
           </DialogContent>
         </Dialog>
       </div>
@@ -103,13 +106,13 @@ export default function Payroll() {
       {records.length === 0 ? (
         <Card><CardContent className="flex flex-col items-center justify-center py-16">
           <Wallet className="mb-3 h-12 w-12 text-muted-foreground/30" />
-          <p className="text-sm text-muted-foreground">No payroll records yet</p>
+          <p className="text-sm text-muted-foreground">{t("payroll.noRecords")}</p>
         </CardContent></Card>
       ) : (
         <Card><CardContent className="p-0">
           <Table>
             <TableHeader><TableRow>
-              <TableHead>Employee</TableHead><TableHead>Role</TableHead><TableHead>Basic</TableHead><TableHead>Deductions</TableHead><TableHead>Net Pay</TableHead><TableHead>Status</TableHead>
+              <TableHead>{t("payroll.employeeName")}</TableHead><TableHead>{t("staff.role")}</TableHead><TableHead>{t("payroll.basicSalary")}</TableHead><TableHead>{t("payroll.deductions")}</TableHead><TableHead>{t("payroll.netPay")}</TableHead><TableHead>{t("common.status")}</TableHead>
             </TableRow></TableHeader>
             <TableBody>
               {records.map((r) => (

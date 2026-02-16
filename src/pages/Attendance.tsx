@@ -4,8 +4,10 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { ClipboardCheck, Calendar, Users } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function Attendance() {
+  const { t } = useLanguage();
   const [classes] = useState(() => {
     const saved = localStorage.getItem("classes");
     return saved ? JSON.parse(saved) : [];
@@ -25,15 +27,15 @@ export default function Attendance() {
     <div className="space-y-6">
       <div className="page-header">
         <div>
-          <h1 className="page-title">Attendance</h1>
-          <p className="page-description">Mark daily attendance — {today}</p>
+          <h1 className="page-title">{t("attendance.title")}</h1>
+          <p className="page-description">{t("attendance.markDaily")} — {today}</p>
         </div>
       </div>
 
       <div className="flex items-center gap-4">
         <Select value={selectedClass} onValueChange={setSelectedClass}>
           <SelectTrigger className="w-48">
-            <SelectValue placeholder="Select class" />
+            <SelectValue placeholder={t("common.selectClass")} />
           </SelectTrigger>
           <SelectContent>
             {classes.map((c: any) => (
@@ -50,9 +52,9 @@ export default function Attendance() {
         <Card>
           <CardContent className="flex flex-col items-center justify-center py-16">
             <ClipboardCheck className="mb-3 h-12 w-12 text-muted-foreground/30" />
-            <p className="text-sm text-muted-foreground">Select a class to mark attendance</p>
+            <p className="text-sm text-muted-foreground">{t("attendance.selectClass")}</p>
             {classes.length === 0 && (
-              <p className="text-xs text-muted-foreground mt-1">Create classes first in the Classes page</p>
+              <p className="text-xs text-muted-foreground mt-1">{t("attendance.createFirst")}</p>
             )}
           </CardContent>
         </Card>
@@ -60,15 +62,15 @@ export default function Attendance() {
         <Card>
           <CardContent className="flex flex-col items-center justify-center py-16">
             <Users className="mb-3 h-12 w-12 text-muted-foreground/30" />
-            <p className="text-sm text-muted-foreground">No students in {selectedClass}</p>
-            <p className="text-xs text-muted-foreground mt-1">Enroll students to this class first</p>
+            <p className="text-sm text-muted-foreground">{t("attendance.noStudents")} {selectedClass}</p>
+            <p className="text-xs text-muted-foreground mt-1">{t("attendance.enrollFirst")}</p>
           </CardContent>
         </Card>
       ) : (
         <Card>
           <CardHeader>
             <CardTitle className="text-base">
-              {selectedClass} — {filteredStudents.length} students
+              {selectedClass} — {filteredStudents.length} {t("attendance.students")}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -80,7 +82,7 @@ export default function Attendance() {
                     <p className="text-xs text-muted-foreground">{s.admissionNumber}</p>
                   </div>
                   <div className="flex gap-1.5">
-                    {["Present", "Absent", "Late"].map((status) => (
+                    {[t("attendance.present"), t("attendance.absent"), t("attendance.late")].map((status) => (
                       <Button key={status} variant="outline" size="sm" className="text-xs h-7">
                         {status}
                       </Button>
