@@ -7,11 +7,121 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Settings as SettingsIcon, GraduationCap, Database, Globe } from "lucide-react";
-import { useState } from "react";
+import { Settings as SettingsIcon, GraduationCap, Database, Globe, Wifi, Copy, Check, Monitor, Smartphone, Tablet } from "lucide-react";
+import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { QRCodeSVG } from "qrcode.react";
 import type { Language } from "@/lib/translations";
 import type { CurriculumType } from "@/contexts/LanguageContext";
+
+function NetworkCard() {
+  const { t, language } = useLanguage();
+  const [copied, setCopied] = useState(false);
+
+  // In production (LAN server mode), these come from the server.
+  // In preview mode, we show the current window location as a demo.
+  const serverIP = window.location.hostname || "192.168.1.100";
+  const serverPort = window.location.port || "3000";
+  const serverURL = `http://${serverIP}:${serverPort}`;
+  const isLocalhost = serverIP === "localhost" || serverIP === "127.0.0.1";
+
+  // Simulated connected devices (in production, fetched from /api/network/clients)
+  const [connectedDevices] = useState(3);
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(serverURL);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  return (
+    <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-transparent">
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2 text-base">
+          <Wifi className="h-4 w-4 text-primary" />
+          {t("settings.network")}
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-5">
+        <p className="text-sm text-muted-foreground">{t("settings.networkDesc")}</p>
+
+        {/* Server Status */}
+        <div className="flex items-center justify-between rounded-lg border bg-background/60 px-4 py-3">
+          <span className="text-sm font-medium">{t("settings.serverStatus")}</span>
+          <Badge variant="outline" className="border-primary/30 text-primary">
+            <span className="me-1.5 h-2 w-2 rounded-full bg-primary inline-block animate-pulse" />
+            {t("settings.running")}
+          </Badge>
+        </div>
+
+        {/* Server Address & Port */}
+        <div className="grid grid-cols-3 gap-3">
+          <div className="col-span-2">
+            <Label className="text-xs text-muted-foreground">{t("settings.serverAddress")}</Label>
+            <div className="mt-1 flex items-center gap-2">
+              <Input value={serverURL} readOnly className="font-mono text-sm bg-background/60" />
+              <Button size="icon" variant="outline" className="shrink-0" onClick={handleCopy}>
+              {copied ? <Check className="h-4 w-4 text-primary" /> : <Copy className="h-4 w-4" />}
+              </Button>
+            </div>
+          </div>
+          <div>
+            <Label className="text-xs text-muted-foreground">{t("settings.port")}</Label>
+            <Input value={serverPort} readOnly className="mt-1 font-mono text-sm bg-background/60" />
+          </div>
+        </div>
+
+        {/* Connected Devices */}
+        <div className="rounded-lg border bg-background/60 px-4 py-3">
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-sm font-medium">{t("settings.connectedDevices")}</span>
+            <Badge variant="secondary" className="text-sm font-bold">{connectedDevices}</Badge>
+          </div>
+          <div className="flex items-center gap-4 text-muted-foreground">
+            <div className="flex items-center gap-1.5 text-xs">
+              <Monitor className="h-3.5 w-3.5" />
+              <span>1 {language === "ar" ? "حاسوب" : "Desktop"}</span>
+            </div>
+            <div className="flex items-center gap-1.5 text-xs">
+              <Smartphone className="h-3.5 w-3.5" />
+              <span>1 {language === "ar" ? "هاتف" : "Phone"}</span>
+            </div>
+            <div className="flex items-center gap-1.5 text-xs">
+              <Tablet className="h-3.5 w-3.5" />
+              <span>1 {language === "ar" ? "جهاز لوحي" : "Tablet"}</span>
+            </div>
+          </div>
+        </div>
+
+        <Separator />
+
+        {/* QR Code */}
+        <div className="text-center space-y-3">
+          <h3 className="text-sm font-semibold">{t("settings.scanQR")}</h3>
+          <p className="text-xs text-muted-foreground">{t("settings.scanQRDesc")}</p>
+          <div className="inline-flex rounded-xl border-2 border-primary/20 bg-white p-4 shadow-sm">
+            <QRCodeSVG
+              value={serverURL}
+              size={160}
+              level="M"
+              includeMargin={false}
+              bgColor="#ffffff"
+              fgColor="#1a1a1a"
+            />
+          </div>
+          <p className="text-xs font-mono text-muted-foreground">{serverURL}</p>
+        </div>
+
+        {/* Tip */}
+        <div className="rounded-lg border border-accent bg-accent/50 px-4 py-3">
+          <p className="text-xs text-accent-foreground">
+            💡 {t("settings.networkTip")}
+          </p>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
 
 export default function SettingsPage() {
   const { settings, updateSettings } = useSchool();
@@ -39,6 +149,9 @@ export default function SettingsPage() {
 
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="lg:col-span-2 space-y-6">
+          {/* Network Configuration Card */}
+          <NetworkCard />
+
           {/* Language & Curriculum Card */}
           <Card>
             <CardHeader>
@@ -79,6 +192,7 @@ export default function SettingsPage() {
             </CardContent>
           </Card>
 
+          {/* School Profile Card */}
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-base">
@@ -151,7 +265,7 @@ export default function SettingsPage() {
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">{t("settings.mode")}</span>
-                <Badge variant="outline" className="text-xs">{language === "ar" ? "غير متصل" : "Offline"}</Badge>
+                <Badge variant="outline" className="text-xs">LAN</Badge>
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">{t("settings.schoolType")}</span>
