@@ -125,6 +125,11 @@
     @apply bg-background text-foreground antialiased;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
+
+  [dir="rtl"] body,
+  [dir="rtl"] * {
+    font-family: 'Noto Sans Arabic', 'Segoe UI', system-ui, sans-serif;
+  }
 }
 
 @layer utilities {
